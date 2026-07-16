@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://toffler.dev/sitemap.xml
