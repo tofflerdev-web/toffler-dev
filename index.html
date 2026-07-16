@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOFFLER — decision dominance</title>
+<meta name="description" content="Cyber. Intelligence. AI integration. Decision dominance.">
+<style>
+  :root{
+    --void:#04050a;
+    --node:#dfe6ee;
+    --dim:#5a6472;
+    --faint:#2a3140;
+    --ember:#b8472e;
+    --signal:#9fb4c7;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    background:var(--void);
+    color:var(--node);
+    font-family:"IBM Plex Mono","SF Mono","Cascadia Mono","JetBrains Mono",Consolas,monospace;
+    overflow:hidden;
+    cursor:crosshair;
+    -webkit-font-smoothing:antialiased;
+  }
+  canvas#field{position:fixed;inset:0;display:block}
+
+  /* ---------- center stack ---------- */
+  .core{
+    position:fixed;inset:0;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    text-align:center;
+    pointer-events:none;
+    z-index:2;
+  }
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.9em;
+    padding-left:.9em; /* optical centering for tracking */
+    color:var(--dim);
+    text-transform:uppercase;
+    opacity:0;
+    animation:surface 3s ease .8s forwards;
+  }
+  .line{
+    margin-top:28px;
+    font-size:clamp(15px,2.2vw,21px);
+    font-weight:400;
+    letter-spacing:.14em;
+    min-height:1.6em;
+    color:var(--node);
+  }
+  .line .caret{
+    display:inline-block;width:.55em;height:1.05em;
+    background:var(--signal);
+    vertical-align:text-bottom;
+    margin-left:2px;
+    animation:pulse 1.1s steps(2) infinite;
+  }
+  .line .dominance{color:#fff;text-shadow:0 0 18px rgba(184,71,46,.35)}
+  .contact{
+    margin-top:44px;
+    pointer-events:auto;
+    opacity:0;
+    transition:opacity 2.5s ease;
+  }
+  .contact.on{opacity:1}
+  .contact a{
+    color:var(--dim);
+    text-decoration:none;
+    font-size:12px;
+    letter-spacing:.35em;
+    text-transform:uppercase;
+    border:1px solid var(--faint);
+    padding:13px 26px 13px 30px;
+    transition:color .6s,border-color .6s,background .6s;
+  }
+  .contact a:hover,.contact a:focus-visible{
+    color:var(--node);
+    border-color:var(--signal);
+    background:rgba(159,180,199,.04);
+    outline:none;
+  }
+  .contact a:focus-visible{border-color:var(--ember)}
+
+  /* ---------- periphery ---------- */
+  .hud{
+    position:fixed;
+    font-size:10px;
+    letter-spacing:.18em;
+    color:var(--dim);
+    z-index:2;
+    user-select:none;
+    line-height:1.9;
+  }
+  .hud b{color:var(--signal);font-weight:400}
+  #hud-tl{top:22px;left:26px}
+  #hud-tr{top:22px;right:26px;text-align:right}
+  #hud-bl{bottom:22px;left:26px}
+  #hud-br{bottom:22px;right:26px;text-align:right}
+
+  #soundctl{
+    pointer-events:auto;cursor:pointer;
+    background:none;border:none;
+    color:var(--dim);
+    font:inherit;letter-spacing:.18em;
+    padding:6px 0;
+    transition:color .5s;
+  }
+  #soundctl:hover,#soundctl:focus-visible{color:var(--node);outline:none}
+  #soundctl .led{color:var(--ember)}
+  #soundctl.live .led{color:#7fd6a4}
+
+  @keyframes surface{to{opacity:1}}
+  @keyframes pulse{50%{opacity:0}}
+
+  @media(max-width:640px){
+    #hud-tr,#hud-bl{display:none}
+    .eyebrow{letter-spacing:.6em;padding-left:.6em}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .line .caret{animation:none}
+    .eyebrow{animation:none;opacity:1}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="field" aria-hidden="true"></canvas>
+
+<main class="core">
+  <div class="eyebrow">Toffler</div>
+  <h1 class="line" id="line" aria-label="cyber. intelligence. ai integration. decision dominance."><span class="caret"></span></h1>
+  <nav class="contact" id="contact">
+    <a href="mailto:tofflerdev@proton.me">establish contact</a>
+  </nav>
+</main>
+
+<div class="hud" id="hud-tl">
+  <span id="clock">--:--:--</span><br>
+  <span>SESSION <b id="session"></b></span>
+</div>
+<div class="hud" id="hud-tr">
+  <span>NODE <b>OLY-05</b></span><br>
+  <span id="state">CALIBRATING</span>
+</div>
+<div class="hud" id="hud-bl">
+  <span>POS <b id="pos">·</b></span><br>
+  <span>DRIFT <b id="drift">0.000</b></span>
+</div>
+<div class="hud" id="hud-br">
+  <button id="soundctl" aria-pressed="false"><span class="led">●</span>&nbsp;SOUND OFF</button>
+</div>
+
+<script>
+"use strict";
+const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ============ typed line ============ */
+/* types the sequence, "corrects" itself once: support -> dominance */
+const lineEl = document.getElementById("line");
+const contact = document.getElementById("contact");
+const script = [
+  {t:"type", s:"cyber. "},
+  {t:"wait", ms:420},
+  {t:"type", s:"intelligence. "},
+  {t:"wait", ms:420},
+  {t:"type", s:"ai integration. "},
+  {t:"wait", ms:700},
+  {t:"type", s:"decision support"},
+  {t:"wait", ms:900},
+  {t:"erase", n:7},
+  {t:"wait", ms:350},
+  {t:"typeStrong", s:"dominance"},
+  {t:"type", s:"."},
+  {t:"done"}
+];
+let buf="", strongBuf="";
+function render(){
+  lineEl.innerHTML = buf +
+    (strongBuf? '<span class="dominance">'+strongBuf+'</span>' : "") +
+    '<span class="caret"></span>';
+}
+function runScript(i=0){
+  const step = script[i];
+  if(!step) return;
+  if(step.t==="wait"){ setTimeout(()=>runScript(i+1), reduced?0:step.ms); return; }
+  if(step.t==="done"){
+    contact.classList.add("on");
+    setState("OBSERVING");
+    return;
+  }
+  if(step.t==="erase"){
+    let n=step.n;
+    (function back(){
+      if(n--<=0){ runScript(i+1); return; }
+      buf = buf.slice(0,-1); render();
+      setTimeout(back, reduced?0:45+Math.random()*40);
+    })();
+    return;
+  }
+  // type / typeStrong
+  const chars = step.s.split(""); let k=0;
+  (function fwd(){
+    if(k>=chars.length){ runScript(i+1); return; }
+    if(step.t==="typeStrong") strongBuf += chars[k++]; else buf += chars[k++];
+    render();
+    setTimeout(fwd, reduced?0:55+Math.random()*70);
+  })();
+}
+render();
+setTimeout(()=>runScript(), reduced?100:1600);
+
+/* ============ HUD ============ */
+const session = document.getElementById("session");
+session.textContent = Array.from(crypto.getRandomValues(new Uint8Array(4)))
+  .map(b=>b.toString(16).padStart(2,"0")).join("").toUpperCase();
+
+const clock = document.getElementById("clock");
+let skew = 0;
+setInterval(()=>{
+  // the clock is almost right. occasionally it disagrees with reality.
+  if(Math.random()<0.02) skew = (Math.random()<0.5?-1:1)*(2000+Math.random()*5000);
+  else skew *= 0.9;
+  const d = new Date(Date.now()+skew);
+  clock.textContent = d.toTimeString().slice(0,8);
+},1000);
+
+const stateEl = document.getElementById("state");
+const states = ["OBSERVING","LISTENING","WAITING","PARSING","OBSERVING","RECALLING"];
+function setState(s){ stateEl.textContent = s; }
+setInterval(()=>{
+  if(Math.random()<0.25 && stateEl.textContent!=="CALIBRATING")
+    setState(states[Math.floor(Math.random()*states.length)]);
+},7000);
+
+const posEl = document.getElementById("pos");
+const driftEl = document.getElementById("drift");
+
+/* ============ constellation ============ */
+const cv = document.getElementById("field");
+const ctx = cv.getContext("2d");
+let W,H,DPR;
+function resize(){
+  DPR = Math.min(devicePixelRatio||1, 2);
+  W = cv.width = innerWidth*DPR;
+  H = cv.height = innerHeight*DPR;
+  cv.style.width = innerWidth+"px";
+  cv.style.height = innerHeight+"px";
+}
+resize(); addEventListener("resize", resize);
+
+const N = innerWidth < 640 ? 70 : 130;
+const nodes = [];
+for(let i=0;i<N;i++){
+  nodes.push({
+    x:Math.random()*innerWidth, y:Math.random()*innerHeight,
+    vx:(Math.random()-.5)*.12, vy:(Math.random()-.5)*.12,
+    r:.6+Math.random()*1.4,
+    w: Math.random() // "ember" susceptibility
+  });
+}
+
+const cursor = {x:innerWidth/2, y:innerHeight/2, seen:false, last:performance.now()};
+addEventListener("pointermove", e=>{
+  cursor.x=e.clientX; cursor.y=e.clientY;
+  cursor.seen=true; cursor.last=performance.now();
+  posEl.textContent = (e.clientX/innerWidth).toFixed(3)+" / "+(e.clientY/innerHeight).toFixed(3);
+});
+addEventListener("pointerdown", e=>{
+  cursor.x=e.clientX; cursor.y=e.clientY;
+  cursor.seen=true; cursor.last=performance.now();
+});
+
+const LINK = innerWidth < 640 ? 90 : 120;
+let attention = 0; // 0..1 — how intently the field regards the visitor
+
+function frame(now){
+  requestAnimationFrame(frame);
+  ctx.clearRect(0,0,W,H);
+  ctx.save(); ctx.scale(DPR,DPR);
+
+  // attention rises during stillness: stop moving, and it turns toward you
+  const idleMs = now - cursor.last;
+  const target = (cursor.seen && idleMs > 2500) ? Math.min(1,(idleMs-2500)/6000) : 0;
+  attention += (target-attention)*0.01;
+  driftEl.textContent = attention.toFixed(3);
+
+  for(const n of nodes){
+    if(!reduced){
+      n.x += n.vx; n.y += n.vy;
+      // gentle lean toward the cursor when near
+      const dx = cursor.x-n.x, dy = cursor.y-n.y;
+      const d2 = dx*dx+dy*dy;
+      if(cursor.seen && d2 < 220*220){
+        const d = Math.sqrt(d2)||1;
+        n.x += (dx/d)*0.06; n.y += (dy/d)*0.06;
+      }
+      // during attention, the whole field slowly gathers toward where you stopped
+      if(attention>0.02){
+        n.x += (cursor.x-n.x)*0.0006*attention;
+        n.y += (cursor.y-n.y)*0.0006*attention;
+      }
+      if(n.x<-20)n.x=innerWidth+20; if(n.x>innerWidth+20)n.x=-20;
+      if(n.y<-20)n.y=innerHeight+20; if(n.y>innerHeight+20)n.y=-20;
+    }
+  }
+
+  // links
+  for(let i=0;i<nodes.length;i++){
+    const a=nodes[i];
+    for(let j=i+1;j<nodes.length;j++){
+      const b=nodes[j];
+      const dx=a.x-b.x, dy=a.y-b.y, d2=dx*dx+dy*dy;
+      if(d2<LINK*LINK){
+        const d=Math.sqrt(d2);
+        // links brighten near the point of attention
+        const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
+        const cd=Math.hypot(mx-cursor.x,my-cursor.y);
+        const focus = attention * Math.max(0,1-cd/260);
+        const alpha = (1-d/LINK)*(0.05+0.35*focus);
+        ctx.strokeStyle = focus>0.25
+          ? `rgba(184,71,46,${alpha})`
+          : `rgba(159,180,199,${alpha})`;
+        ctx.lineWidth = 0.6;
+        ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+      }
+    }
+  }
+
+  // nodes
+  for(const n of nodes){
+    const cd=Math.hypot(n.x-cursor.x,n.y-cursor.y);
+    const focus = attention * Math.max(0,1-cd/220);
+    const ember = focus>0.3 && n.w>0.7;
+    ctx.fillStyle = ember
+      ? `rgba(184,71,46,${0.5+0.5*focus})`
+      : `rgba(223,230,238,${0.25+0.5*focus})`;
+    ctx.beginPath(); ctx.arc(n.x,n.y,n.r+(ember?0.6:0),0,7); ctx.fill();
+  }
+  ctx.restore();
+}
+requestAnimationFrame(frame);
+
+/* ============ procedural drone ============ */
+const btn = document.getElementById("soundctl");
+let audio=null;
+btn.addEventListener("click", ()=>{
+  if(audio){ // off
+    audio.master.gain.linearRampToValueAtTime(0.0001, audio.ctx.currentTime+1.2);
+    setTimeout(()=>audio.ctx.close(), 1400);
+    audio=null;
+    btn.innerHTML='<span class="led">●</span>&nbsp;SOUND OFF';
+    btn.classList.remove("live");
+    btn.setAttribute("aria-pressed","false");
+    return;
+  }
+  const ctxA = new (window.AudioContext||window.webkitAudioContext)();
+  const master = ctxA.createGain(); master.gain.value=0.0001;
+  master.connect(ctxA.destination);
+
+  // two detuned low oscillators + a fifth above, all slowly breathing
+  const freqs=[55, 55.7, 82.4];
+  const oscs = freqs.map((f,i)=>{
+    const o=ctxA.createOscillator(); o.type=i<2?"sine":"triangle"; o.frequency.value=f;
+    const g=ctxA.createGain(); g.gain.value=i<2?0.5:0.12;
+    const lfo=ctxA.createOscillator(); lfo.frequency.value=0.05+i*0.021;
+    const lg=ctxA.createGain(); lg.gain.value=i<2?0.18:0.06;
+    lfo.connect(lg); lg.connect(g.gain);
+    o.connect(g); g.connect(master);
+    o.start(); lfo.start();
+    return o;
+  });
+
+  // filtered noise — distant wind through the machine
+  const len=ctxA.sampleRate*2;
+  const nb=ctxA.createBuffer(1,len,ctxA.sampleRate);
+  const data=nb.getChannelData(0);
+  for(let i=0;i<len;i++) data[i]=Math.random()*2-1;
+  const src=ctxA.createBufferSource(); src.buffer=nb; src.loop=true;
+  const lp=ctxA.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=340; lp.Q.value=0.4;
+  const ng=ctxA.createGain(); ng.gain.value=0.05;
+  src.connect(lp); lp.connect(ng); ng.connect(master);
+  src.start();
+
+  master.gain.linearRampToValueAtTime(0.16, ctxA.currentTime+4);
+  audio={ctx:ctxA, master, oscs};
+  btn.innerHTML='<span class="led">●</span>&nbsp;SOUND LIVE';
+  btn.classList.add("live");
+  btn.setAttribute("aria-pressed","true");
+});
+</script>
+</body>
+</html>
