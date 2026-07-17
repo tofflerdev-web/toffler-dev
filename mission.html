@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MISSION — TOFFLER</title>
+<meta name="description" content="Toffler mission — cyber, intelligence, and AI integration engineered for decision dominance. Read the introduction document.">
+<link rel="canonical" href="https://toffler.dev/mission.html">
+<meta name="theme-color" content="#ffffff">
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TOFFLER">
+<meta property="og:title" content="MISSION — TOFFLER">
+<meta property="og:description" content="Cyber. Intelligence. AI integration. Decision dominance.">
+<meta property="og:url" content="https://toffler.dev/mission.html">
+<meta property="og:image" content="https://toffler.dev/og.png">
+<style>
+  :root{
+    --paper:#ffffff;
+    --ink:#10141a;
+    --dim:#5a6472;
+    --faint:#d7dce3;
+    --ember:#b8472e;
+    --signal:#3d5468;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:"IBM Plex Mono","SF Mono","Cascadia Mono","JetBrains Mono",Consolas,monospace;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  header{
+    position:sticky;top:0;z-index:5;
+    background:rgba(255,255,255,.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--faint);
+    display:flex;align-items:center;justify-content:space-between;
+    gap:12px;
+    padding:14px 26px;
+  }
+  .brand{
+    font-size:11px;letter-spacing:.5em;text-transform:uppercase;
+    color:var(--dim);text-decoration:none;white-space:nowrap;
+    transition:color .4s;
+  }
+  .brand:hover,.brand:focus-visible{color:var(--ink);outline:none}
+  .brand b{color:var(--ember);font-weight:400}
+  .actions{display:flex;gap:10px}
+  .actions a{
+    color:var(--dim);text-decoration:none;
+    font-size:11px;letter-spacing:.25em;text-transform:uppercase;
+    border:1px solid var(--faint);
+    padding:9px 16px 9px 19px;
+    transition:color .4s,border-color .4s,background .4s;
+    white-space:nowrap;
+  }
+  .actions a:hover,.actions a:focus-visible{
+    color:var(--ink);border-color:var(--signal);
+    background:rgba(61,84,104,.05);outline:none;
+  }
+  main{
+    max-width:900px;margin:0 auto;
+    padding:34px 16px 70px;
+  }
+  h1{
+    font-size:12px;letter-spacing:.6em;padding-left:.6em;
+    text-transform:uppercase;color:var(--dim);
+    text-align:center;font-weight:400;
+    margin-bottom:30px;
+  }
+  #viewer{display:flex;flex-direction:column;align-items:center;gap:22px}
+  #viewer canvas{
+    max-width:100%;height:auto;
+    border:1px solid var(--faint);
+    box-shadow:0 8px 30px rgba(16,20,26,.08);
+    background:#fff;
+  }
+  #status{
+    text-align:center;color:var(--dim);
+    font-size:11px;letter-spacing:.25em;text-transform:uppercase;
+    padding:40px 0;
+  }
+  #fallback{display:none;width:100%;height:82vh;border:1px solid var(--faint)}
+  footer{
+    border-top:1px solid var(--faint);
+    padding:20px 26px;text-align:center;
+    font-size:10px;letter-spacing:.3em;text-transform:uppercase;
+    color:var(--dim);
+  }
+  footer a{color:var(--dim)}
+  @media(max-width:640px){
+    header{padding:12px 14px}
+    .brand{letter-spacing:.3em}
+    .actions a{padding:8px 10px 8px 13px;letter-spacing:.15em}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <a class="brand" href="/">TOFFLER <b>//</b> RETURN</a>
+  <nav class="actions">
+    <a href="/tofflerdev_intro.pdf" download="tofflerdev_intro.pdf">download</a>
+    <a href="/tofflerdev_intro.pdf" target="_blank" rel="noopener">open raw</a>
+  </nav>
+</header>
+
+<main>
+  <h1>Mission</h1>
+  <div id="status">LOADING DOCUMENT…</div>
+  <div id="viewer" aria-label="Toffler introduction document"></div>
+  <iframe id="fallback" src="/tofflerdev_intro.pdf" title="Toffler introduction PDF"></iframe>
+</main>
+
+<footer>
+  <a href="/">toffler.dev</a>
+</footer>
+
+<script src="/vendor/pdfjs/pdf.min.js"></script>
+<script>
+"use strict";
+(function(){
+  const status = document.getElementById("status");
+  const viewer = document.getElementById("viewer");
+  const fallback = document.getElementById("fallback");
+  const URL_PDF = "/tofflerdev_intro.pdf";
+
+  function useFallback(){
+    // pdf.js unavailable — hand rendering to the browser's native reader
+    viewer.style.display = "none";
+    status.style.display = "none";
+    fallback.style.display = "block";
+  }
+
+  if(!window.pdfjsLib){ useFallback(); return; }
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.min.js";
+
+  pdfjsLib.getDocument(URL_PDF).promise.then(async function(pdf){
+    status.style.display = "none";
+    const scale = Math.min(2, (window.devicePixelRatio||1)*1.5);
+    for(let p=1; p<=pdf.numPages; p++){
+      const page = await pdf.getPage(p);
+      const vp = page.getViewport({scale});
+      const canvas = document.createElement("canvas");
+      canvas.width = vp.width; canvas.height = vp.height;
+      canvas.setAttribute("aria-label","Page "+p+" of "+pdf.numPages);
+      viewer.appendChild(canvas);
+      await page.render({canvasContext:canvas.getContext("2d"), viewport:vp}).promise;
+    }
+  }).catch(useFallback);
+})();
+</script>
+</body>
+</html>
