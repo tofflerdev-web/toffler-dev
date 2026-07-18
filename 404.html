@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOFFLER — signal lost</title>
+<meta name="description" content="404 — no node answers at this address.">
+<meta name="theme-color" content="#04050a">
+<meta name="robots" content="noindex">
+<style>
+  :root{
+    --void:#04050a;
+    --node:#dfe6ee;
+    --dim:#5a6472;
+    --faint:#2a3140;
+    --ember:#b8472e;
+    --signal:#9fb4c7;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    background:var(--void);
+    color:var(--node);
+    font-family:"IBM Plex Mono","SF Mono","Cascadia Mono","JetBrains Mono",Consolas,monospace;
+    overflow:hidden;
+    cursor:crosshair;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .core{
+    position:fixed;inset:0;
+    display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    text-align:center;
+    z-index:2;
+  }
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.9em;
+    padding-left:.9em;
+    color:var(--dim);
+    text-transform:uppercase;
+    opacity:0;
+    animation:surface 3s ease .4s forwards;
+  }
+  .code{
+    margin-top:30px;
+    font-size:clamp(42px,9vw,84px);
+    font-weight:400;
+    letter-spacing:.3em;
+    padding-left:.3em;
+    color:var(--node);
+    text-shadow:0 0 24px rgba(159,180,199,.18);
+  }
+  .line{
+    margin-top:22px;
+    font-size:clamp(13px,1.8vw,17px);
+    letter-spacing:.14em;
+    color:var(--node);
+  }
+  .line .lost{color:#fff;text-shadow:0 0 18px rgba(184,71,46,.35)}
+  .line .caret{
+    display:inline-block;width:.55em;height:1.05em;
+    background:var(--signal);
+    vertical-align:text-bottom;
+    margin-left:2px;
+    animation:pulse 1.1s steps(2) infinite;
+  }
+  .sub{
+    margin-top:14px;
+    font-size:11px;
+    letter-spacing:.22em;
+    color:var(--dim);
+    text-transform:uppercase;
+  }
+  .contact{
+    margin-top:44px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+    opacity:0;
+    animation:surface 2.5s ease 1.2s forwards;
+  }
+  .contact a{
+    color:var(--dim);
+    text-decoration:none;
+    font-size:12px;
+    letter-spacing:.35em;
+    text-transform:uppercase;
+    border:1px solid var(--faint);
+    padding:13px 26px 13px 30px;
+    transition:color .6s,border-color .6s,background .6s;
+  }
+  .contact a:hover,.contact a:focus-visible{
+    color:var(--node);
+    border-color:var(--signal);
+    background:rgba(159,180,199,.04);
+    outline:none;
+  }
+  .contact a:focus-visible{border-color:var(--ember)}
+
+  .hud{
+    position:fixed;
+    font-size:10px;
+    letter-spacing:.18em;
+    color:var(--dim);
+    z-index:2;
+    user-select:none;
+    line-height:1.9;
+  }
+  .hud b{color:var(--signal);font-weight:400}
+  .hud .err{color:var(--ember)}
+  #hud-tl{top:22px;left:26px}
+  #hud-tr{top:22px;right:26px;text-align:right}
+  #hud-bl{bottom:22px;left:26px}
+  #hud-br{bottom:22px;right:26px;text-align:right}
+
+  @keyframes surface{to{opacity:1}}
+  @keyframes pulse{50%{opacity:0}}
+
+  @media(max-width:640px){
+    #hud-tr,#hud-bl{display:none}
+    .eyebrow{letter-spacing:.6em;padding-left:.6em}
+  }
+  @media(prefers-reduced-motion:reduce){
+    .line .caret{animation:none}
+    .eyebrow,.contact{animation:none;opacity:1}
+  }
+</style>
+</head>
+<body>
+
+<main class="core">
+  <div class="eyebrow">Toffler</div>
+  <div class="code" aria-hidden="true">404</div>
+  <h1 class="line">signal <span class="lost">lost</span>.<span class="caret"></span></h1>
+  <p class="sub">no node answers at this address</p>
+  <nav class="contact">
+    <a href="/">return to field</a>
+    <a href="/mission.html">mission</a>
+  </nav>
+</main>
+
+<div class="hud" id="hud-tl">
+  <span id="clock">--:--:--</span><br>
+  <span>SESSION <b id="session"></b></span>
+</div>
+<div class="hud" id="hud-tr">
+  <span>NODE <b>OLY-05</b></span><br>
+  <span class="err">ROUTE UNRESOLVED</span>
+</div>
+<div class="hud" id="hud-bl">
+  <span>TRACE <b id="trace">·</b></span><br>
+  <span>DRIFT <b>0.000</b></span>
+</div>
+<div class="hud" id="hud-br">
+  <span class="err">● 404</span>
+</div>
+
+<script>
+"use strict";
+document.getElementById("session").textContent =
+  Array.from(crypto.getRandomValues(new Uint8Array(4)))
+    .map(b=>b.toString(16).padStart(2,"0")).join("").toUpperCase();
+
+const clock = document.getElementById("clock");
+setInterval(()=>{ clock.textContent = new Date().toTimeString().slice(0,8); },1000);
+clock.textContent = new Date().toTimeString().slice(0,8);
+
+const trace = document.getElementById("trace");
+const path = location.pathname.length > 28
+  ? location.pathname.slice(0,27)+"…"
+  : location.pathname;
+trace.textContent = path;
+</script>
+</body>
+</html>
