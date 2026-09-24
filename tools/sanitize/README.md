@@ -1,7 +1,10 @@
 # Paste Sanitizer
 
 Redact secrets and personal data from logs before pasting them into an AI chat,
-a ticket or a forum. Live at <https://toffler.dev/tools/sanitize/>.
+a ticket or a forum.
+
+- **Use it:** <https://toffler.dev/tools/sanitize/>
+- **Source:** <https://github.com/tofflerdev-web/paste-sanitizer>
 
 - **100% client-side.** No server, no analytics, no storage. The page's CSP
   (`connect-src 'none'`) makes the browser refuse any network request.
@@ -38,3 +41,6 @@ restore(aiReply, r.map);
 node --test "tools/sanitize/test/*.test.js"
 ```
 
+## License
+
+MIT — see [LICENSE](LICENSE). © 2026 Toffler.

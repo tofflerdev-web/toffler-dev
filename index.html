@@ -123,6 +123,8 @@
     outline:none;
   }
   .contact a:focus-visible{border-color:var(--ember)}
+  .contact a.src{border:none;padding:0 0 0 .35em;margin-top:-8px;font-size:10px;letter-spacing:.35em}
+  .contact a.src:hover,.contact a.src:focus-visible{background:none;color:var(--node)}
 
   /* ---------- periphery ---------- */
   .hud{
@@ -175,7 +177,8 @@
   <nav class="contact" id="contact">
     <a href="mailto:tofflerdev@proton.me">establish contact</a>
     <a href="/mission.html">mission</a>
-    <a href="/tools/sanitize/">paste sanitizer</a>
+    <a href="/tools/sanitize/" target="_blank" rel="noopener">paste sanitizer</a>
+    <a class="src" href="https://github.com/tofflerdev-web/paste-sanitizer" target="_blank" rel="noopener">source · github</a>
   </nav>
 </main>
 
