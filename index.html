@@ -163,6 +163,121 @@
   .legal a{color:var(--dim);text-decoration:none;transition:color .5s}
   .legal a:hover,.legal a:focus-visible{color:var(--node);outline:none}
 
+  /* ---------- menu button + popup ---------- */
+  .contact button.menu{
+    font:inherit;
+    color:var(--dim);background:none;cursor:pointer;
+    font-size:12px;letter-spacing:.35em;text-transform:uppercase;
+    border:1px solid var(--faint);
+    padding:13px 26px 13px 30px;
+    transition:color .6s,border-color .6s,background .6s;
+  }
+  .contact button.menu .bars{display:inline-block;margin-right:.9em;letter-spacing:0;color:var(--ember)}
+  .contact button.menu:hover,.contact button.menu:focus-visible{
+    color:var(--node);border-color:var(--signal);
+    background:rgba(159,180,199,.04);outline:none;
+  }
+  .contact button.menu:focus-visible{border-color:var(--ember)}
+
+  dialog#menu{
+    border:none;background:transparent;color:var(--node);
+    padding:0;margin:auto;max-width:none;max-height:none;overflow:visible;
+    font-family:inherit;
+  }
+  dialog#menu::backdrop{
+    background:radial-gradient(ellipse at center,rgba(20,26,40,.55),rgba(4,5,10,.88));
+    backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
+  }
+  dialog#menu[open]::backdrop{animation:veil .5s ease both}
+  .panel{
+    position:relative;
+    width:min(460px,calc(100vw - 32px));
+    padding:26px 28px 22px;
+    background:linear-gradient(180deg,rgba(15,19,30,.97),rgba(6,8,14,.97));
+    border:1px solid var(--faint);
+    box-shadow:0 0 0 1px rgba(159,180,199,.05),0 40px 90px rgba(0,0,0,.65),0 0 70px rgba(184,71,46,.09);
+    overflow:hidden;
+  }
+  dialog#menu[open] .panel{animation:rise .55s cubic-bezier(.2,.8,.2,1) both}
+  /* ember scan line sweeping across the top edge */
+  .panel::before{
+    content:"";position:absolute;top:0;left:-40%;width:40%;height:1px;
+    background:linear-gradient(90deg,transparent,var(--ember),transparent);
+    animation:sweep 3.6s ease-in-out .5s infinite;
+  }
+  /* corner brackets */
+  .panel::after{
+    content:"";position:absolute;inset:7px;pointer-events:none;
+    background:
+      linear-gradient(var(--signal),var(--signal)) top left/10px 1px,
+      linear-gradient(var(--signal),var(--signal)) top left/1px 10px,
+      linear-gradient(var(--signal),var(--signal)) top right/10px 1px,
+      linear-gradient(var(--signal),var(--signal)) top right/1px 10px,
+      linear-gradient(var(--signal),var(--signal)) bottom left/10px 1px,
+      linear-gradient(var(--signal),var(--signal)) bottom left/1px 10px,
+      linear-gradient(var(--signal),var(--signal)) bottom right/10px 1px,
+      linear-gradient(var(--signal),var(--signal)) bottom right/1px 10px;
+    background-repeat:no-repeat;opacity:.45;
+  }
+  .phead{
+    display:flex;justify-content:space-between;align-items:center;
+    font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim);
+    padding-bottom:16px;border-bottom:1px solid var(--faint);
+  }
+  .phead b{color:var(--signal);font-weight:400}
+  .phead .dot{color:var(--ember)}
+  .phead button{
+    font:inherit;letter-spacing:.2em;background:none;border:none;cursor:pointer;
+    color:var(--dim);padding:4px 0 4px 10px;transition:color .4s;
+  }
+  .phead button:hover,.phead button:focus-visible{color:var(--node);outline:none}
+  #menu nav{display:flex;flex-direction:column;margin:8px 0 6px}
+  #menu nav a{
+    display:grid;grid-template-columns:2.4em 1fr auto;align-items:baseline;
+    padding:17px 12px 17px 10px;
+    color:var(--node);text-decoration:none;
+    font-size:13px;letter-spacing:.3em;text-transform:uppercase;
+    border-bottom:1px solid rgba(42,49,64,.6);
+    border-left:2px solid transparent;
+    transition:background .35s,border-color .35s,padding-left .35s,color .35s;
+    opacity:0;
+  }
+  #menu nav a .n{font-size:10px;letter-spacing:.15em;color:var(--ember)}
+  #menu nav a .go{
+    color:var(--signal);opacity:0;transform:translateX(-8px);
+    transition:opacity .35s,transform .35s;
+  }
+  #menu nav a small{
+    display:block;grid-column:2;margin-top:5px;
+    font-size:9px;letter-spacing:.22em;color:var(--dim);
+  }
+  #menu nav a:hover,#menu nav a:focus-visible{
+    background:rgba(159,180,199,.05);border-left-color:var(--ember);
+    padding-left:16px;color:#fff;outline:none;
+  }
+  #menu nav a:hover .go,#menu nav a:focus-visible .go{opacity:1;transform:none}
+  dialog#menu[open] nav a{animation:item .5s ease both}
+  dialog#menu[open] nav a:nth-child(1){animation-delay:.14s}
+  dialog#menu[open] nav a:nth-child(2){animation-delay:.22s}
+  dialog#menu[open] nav a:nth-child(3){animation-delay:.30s}
+  dialog#menu[open] nav a:nth-child(4){animation-delay:.38s}
+  .pfoot{
+    display:flex;justify-content:space-between;gap:12px;
+    font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);
+    padding-top:14px;
+  }
+  .pfoot a{color:var(--dim);text-decoration:none;transition:color .4s}
+  .pfoot a:hover,.pfoot a:focus-visible{color:var(--node);outline:none}
+  @keyframes veil{from{opacity:0}}
+  @keyframes rise{from{opacity:0;transform:translateY(14px) scale(.97)}}
+  @keyframes item{from{opacity:0;transform:translateX(-10px)}to{opacity:1;transform:none}}
+  @keyframes sweep{0%{left:-40%}60%,100%{left:100%}}
+  @media(prefers-reduced-motion:reduce){
+    dialog#menu[open] .panel,dialog#menu[open]::backdrop,dialog#menu[open] nav a{animation:none}
+    #menu nav a{opacity:1}
+    .panel::before{animation:none;display:none}
+  }
+
   @keyframes surface{to{opacity:1}}
   @keyframes pulse{50%{opacity:0}}
 
@@ -185,8 +300,7 @@
   <div class="eyebrow">Toffler</div>
   <h1 class="line" id="line" aria-label="cyber. intelligence. ai integration. decision dominance."><span class="caret"></span></h1>
   <nav class="contact" id="contact">
-    <a href="mailto:tofflerdev@proton.me">establish contact</a>
-    <a href="/mission.html">mission</a>
+    <button type="button" class="menu" id="menubtn" aria-haspopup="dialog" aria-controls="menu"><span class="bars" aria-hidden="true">&#9776;</span>menu</button>
     <a href="/tools/sanitize/" target="_blank" rel="noopener">paste sanitizer</a>
     <a href="/tools/unit-doctor/" target="_blank" rel="noopener">unit doctor</a>
     <a class="src" href="https://github.com/tofflerdev-web" target="_blank" rel="noopener">source · github</a>
@@ -448,6 +562,41 @@ btn.addEventListener("click", ()=>{
   btn.classList.add("live");
   btn.setAttribute("aria-pressed","true");
 });
+</script>
+
+<dialog id="menu" aria-labelledby="menu-title">
+  <div class="panel">
+    <div class="phead">
+      <span id="menu-title"><span class="dot">&#9679;</span>&nbsp; <b>MENU</b> &middot; NODE OLY-05</span>
+      <button type="button" id="menuclose" aria-label="Close menu">CLOSE &#10005;</button>
+    </div>
+    <nav>
+      <a href="mailto:tofflerdev@proton.me"><span class="n">01</span><span>establish contact</span><span class="go" aria-hidden="true">&rarr;</span><small>open a channel</small></a>
+      <a href="/mission.html"><span class="n">02</span><span>mission</span><span class="go" aria-hidden="true">&rarr;</span><small>the introduction document</small></a>
+      <a href="/demo.html"><span class="n">03</span><span>demo</span><span class="go" aria-hidden="true">&rarr;</span><small>ai assistant &middot; coming soon</small></a>
+      <a href="/privacy-en.html"><span class="n">04</span><span>privacy note</span><span class="go" aria-hidden="true">&rarr;</span><small>how we handle data</small></a>
+    </nav>
+    <div class="pfoot"><span>ESC to close</span><a href="/privacy.html" lang="it" hreflang="it">informativa privacy &middot; IT</a></div>
+  </div>
+</dialog>
+
+<script>
+"use strict";
+(function(){
+  const dlg = document.getElementById("menu");
+  const openBtn = document.getElementById("menubtn");
+  const closeBtn = document.getElementById("menuclose");
+  if(!dlg || typeof dlg.showModal !== "function"){
+    // no <dialog> support: the button degrades to a plain contact link
+    openBtn.addEventListener("click", ()=>{ location.href = "mailto:tofflerdev@proton.me"; });
+    return;
+  }
+  openBtn.addEventListener("click", ()=>{ dlg.showModal(); setState("ACCESSING"); });
+  closeBtn.addEventListener("click", ()=>dlg.close());
+  // a click that lands on the <dialog> itself (outside the panel) is the backdrop
+  dlg.addEventListener("click", e=>{ if(e.target === dlg) dlg.close(); });
+  dlg.addEventListener("close", ()=>{ setState("OBSERVING"); openBtn.focus(); });
+})();
 </script>
 </body>
 </html>
