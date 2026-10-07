@@ -290,6 +290,11 @@
     .eyebrow{animation:none;opacity:1}
   }
 </style>
+<script>
+/* QR scans: Cloudflare Web Analytics drops query strings, so file ?utm_source=card
+   visits under their own path (/card, see card.html) before the beacon reads the URL. */
+try{if(location.pathname==="/"&&new URLSearchParams(location.search).get("utm_source")==="card")history.replaceState(null,"","/card")}catch(e){}
+</script>
 </head>
 <body>
 
