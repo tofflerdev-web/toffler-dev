@@ -4,131 +4,440 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DEMO — TOFFLER</title>
-<meta name="description" content="Toffler demo — an AI assistant for professional practices. Coming soon.">
+<meta name="description" content="HT-01 — an AI assistant terminal for High Torque. Answers instantly; the AI model runs in your own browser.">
 <link rel="canonical" href="https://toffler.dev/demo.html">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#04050a">
 <meta name="robots" content="noindex">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="TOFFLER">
 <meta property="og:title" content="DEMO — TOFFLER">
-<meta property="og:description" content="Toffler demo — coming soon.">
+<meta property="og:description" content="An AI assistant terminal. The model runs in your browser.">
 <meta property="og:url" content="https://toffler.dev/demo.html">
 <meta property="og:image" content="https://toffler.dev/og.png">
 <style>
   :root{
-    --paper:#ffffff;
-    --ink:#10141a;
+    --void:#04050a;
+    --node:#dfe6ee;
     --dim:#5a6472;
-    --faint:#d7dce3;
+    --faint:#2a3140;
     --ember:#b8472e;
-    --signal:#3d5468;
+    --signal:#9fb4c7;
+    --phos:#7fd6a4;
+    --phos-dim:#3f7a5c;
   }
   *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
   body{
-    background:var(--paper);
-    color:var(--ink);
+    background:var(--void);
+    color:var(--phos);
     font-family:"IBM Plex Mono","SF Mono","Cascadia Mono","JetBrains Mono",Consolas,monospace;
     -webkit-font-smoothing:antialiased;
-    min-height:100vh;
+    overflow:hidden;
   }
-  header{
-    position:sticky;top:0;z-index:5;
-    background:rgba(255,255,255,.92);
-    backdrop-filter:blur(6px);
-    border-bottom:1px solid var(--faint);
-    display:flex;align-items:center;justify-content:space-between;
-    gap:12px;
-    padding:14px 26px;
+  .crt{
+    position:relative;
+    height:100dvh;
+    display:flex;flex-direction:column;
+    max-width:940px;margin:0 auto;
+    background:radial-gradient(ellipse at 50% 40%,rgba(127,214,164,.055),rgba(4,5,10,0) 70%);
+    border-left:1px solid var(--faint);border-right:1px solid var(--faint);
   }
-  .brand{
-    font-size:11px;letter-spacing:.5em;text-transform:uppercase;
-    color:var(--dim);text-decoration:none;white-space:nowrap;
-    transition:color .4s;
+  /* scanlines + vignette sit above everything but never take input */
+  body::after{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:50;
+    background:
+      repeating-linear-gradient(to bottom,rgba(0,0,0,.20) 0 1px,transparent 1px 3px),
+      radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.55) 100%);
+    animation:flicker 6s steps(60) infinite;
   }
-  .brand:hover,.brand:focus-visible{color:var(--ink);outline:none}
-  .brand b{color:var(--ember);font-weight:400}
-  .actions{display:flex;gap:10px}
-  .actions a{
-    color:var(--dim);text-decoration:none;
-    font-size:11px;letter-spacing:.25em;text-transform:uppercase;
-    border:1px solid var(--faint);
-    padding:9px 16px 9px 19px;
-    transition:color .4s,border-color .4s,background .4s;
-    white-space:nowrap;
+  @keyframes flicker{0%,100%{opacity:1}47%{opacity:.96}48%{opacity:1}73%{opacity:.97}}
+
+  .bar{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+    padding:12px 18px;border-bottom:1px solid var(--faint);
+    font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);
   }
-  .actions a:hover,.actions a:focus-visible{
-    color:var(--ink);border-color:var(--signal);
-    background:rgba(61,84,104,.05);outline:none;
+  .bar a{color:var(--dim);text-decoration:none;white-space:nowrap;transition:color .4s}
+  .bar a:hover,.bar a:focus-visible{color:var(--node);outline:none}
+  .bar b{color:var(--ember);font-weight:400}
+  .title{color:var(--phos-dim);text-align:center;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  #mode{white-space:nowrap;color:var(--phos)}
+  #mode::before{content:"\25CF\00a0";color:var(--ember)}
+  #mode.ai::before{color:var(--phos)}
+
+  #term{
+    flex:1;overflow-y:auto;overscroll-behavior:contain;
+    padding:18px 18px 8px;
+    font-size:14px;line-height:1.65;
+    text-shadow:0 0 7px rgba(127,214,164,.32);
+    cursor:text;
+    scrollbar-width:thin;scrollbar-color:var(--faint) transparent;
   }
-  main{
-    max-width:760px;margin:0 auto;
-    padding:34px 16px 70px;
+  .ln{white-space:pre-wrap;word-break:break-word;margin-bottom:6px}
+  .ln.usr{color:var(--signal);text-shadow:none}
+  .ln.sys{color:var(--phos-dim)}
+  .ln.it{color:var(--signal);opacity:.8;text-shadow:none;font-size:12.5px}
+  .ln.warn{color:var(--ember);text-shadow:none}
+  .ln.bot::before{content:"HT-01> ";color:var(--phos-dim)}
+  .ln a{color:var(--signal);text-decoration:underline;text-underline-offset:3px}
+  .ln.big{font-size:clamp(18px,4vw,30px);letter-spacing:.3em;color:#e9fff3;line-height:1.3}
+  .cursor{display:inline-block;width:.6em;height:1.05em;background:var(--phos);vertical-align:text-bottom;animation:blink 1.1s steps(2) infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  #line{display:flex;align-items:center;gap:.6em;margin-top:4px}
+  .ps1{color:var(--phos-dim);white-space:nowrap;text-shadow:none}
+  #in{
+    flex:1;min-width:0;background:transparent;border:none;outline:none;
+    color:var(--node);font:inherit;caret-color:var(--phos);
   }
-  h1{
-    font-size:12px;letter-spacing:.6em;padding-left:.6em;
-    text-transform:uppercase;color:var(--dim);
-    text-align:center;font-weight:400;
-    margin-bottom:30px;
+
+  .chips{
+    display:flex;flex-wrap:wrap;gap:8px;padding:8px 18px 12px;
   }
-  .intro{font-size:13px;line-height:1.8;color:var(--dim);margin-bottom:10px}
-  h2{
-    font-size:12px;letter-spacing:.2em;text-transform:uppercase;
-    font-weight:400;color:var(--signal);
-    margin:34px 0 10px;
+  .chips button{
+    font:inherit;font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    background:none;color:var(--dim);border:1px solid var(--faint);
+    padding:8px 13px;cursor:pointer;transition:color .4s,border-color .4s,background .4s;
   }
-  p,li{font-size:13px;line-height:1.8}
-  p{margin-bottom:10px}
-  ul{margin:0 0 10px 1.4em}
-  li{margin-bottom:6px}
-  code{background:rgba(61,84,104,.08);padding:1px 5px;font-family:inherit}
-  a{color:var(--signal)}
-  #demo-widget{margin:26px 0 22px}
-  .slot{
-    min-height:380px;
-    display:flex;align-items:center;justify-content:center;
-    border:1px dashed var(--faint);
-    color:var(--dim);
-    font-size:11px;letter-spacing:.25em;text-transform:uppercase;
+  .chips button:hover,.chips button:focus-visible{
+    color:var(--phos);border-color:var(--phos-dim);background:rgba(127,214,164,.05);outline:none;
   }
-  .note{color:var(--dim)}
+  .chips button.boot{color:var(--phos);border-color:var(--phos-dim)}
   footer{
-    border-top:1px solid var(--faint);
-    padding:20px 26px;text-align:center;
-    font-size:10px;letter-spacing:.3em;text-transform:uppercase;
-    color:var(--dim);
+    padding:10px 18px 14px;border-top:1px solid var(--faint);
+    font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);
+    display:flex;gap:6px 14px;flex-wrap:wrap;justify-content:center;
   }
-  footer a{color:var(--dim)}
+  footer a{color:var(--dim);text-decoration:none;transition:color .4s}
+  footer a:hover,footer a:focus-visible{color:var(--node);outline:none}
+
   @media(max-width:640px){
-    header{padding:12px 14px}
-    .brand{letter-spacing:.3em}
-    .actions a{padding:8px 10px 8px 13px;letter-spacing:.15em}
+    .crt{border:none}
+    .bar{padding:10px 12px;letter-spacing:.15em}
+    .title{display:none}
+    #term{padding:14px 12px 6px;font-size:13px}
+    #in{font-size:16px}  /* >=16px stops iOS zooming on focus */
+    .chips{padding:8px 12px 10px}
+  }
+  @media(prefers-reduced-motion:reduce){
+    body::after{animation:none}
+    .cursor{animation:none}
   }
 </style>
 </head>
 <body>
 
-<header>
-  <a class="brand" href="/">TOFFLER <b>//</b> RETURN</a>
-  <nav class="actions">
-    <a href="/mission.html">mission</a>
-  </nav>
-</header>
+<div class="crt">
+  <header class="bar">
+    <a href="/">TOFFLER <b>//</b> RETURN</a>
+    <span class="title">HT-01 &middot; HIGH TORQUE ASSISTANT</span>
+    <span id="mode" aria-live="polite">LITE</span>
+  </header>
 
-<main>
-  <h1>Demo</h1>
+  <main id="term" role="log" aria-label="HT-01 terminal" tabindex="-1">
+    <div id="out"></div>
+    <form id="line" autocomplete="off">
+      <label class="ps1" for="in">visitor@ht01:~$</label>
+      <input id="in" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send" aria-label="Type a message or command">
+    </form>
+  </main>
 
-  <p class="intro">A live demonstration of what an AI assistant can do for a professional practice: answer common questions, collect requests, point people to the right person. The interactive demo is being prepared and will appear below.</p>
+  <div class="chips" aria-label="Quick commands">
+    <button type="button" data-cmd="help">help</button>
+    <button type="button" data-cmd="quote">quote</button>
+    <button type="button" data-cmd="lead time">lead time</button>
+    <button type="button" data-cmd="boot" class="boot">boot ai</button>
+    <button type="button" data-cmd="italiano">italiano</button>
+  </div>
 
-  <section id="demo-widget" aria-label="Chatbot demo">
-    <div class="slot">DEMO COMING SOON</div>
-  </section>
+  <footer>
+    <a href="/">toffler.dev</a>
+    <a href="/privacy-en.html">Privacy</a>
+    <a href="/privacy.html" lang="it" hreflang="it">Informativa privacy</a>
+  </footer>
+</div>
 
-  <p class="note">Questions in the meantime? <a href="mailto:tofflerdev@proton.me">tofflerdev@proton.me</a></p>
-</main>
+<noscript><p style="position:fixed;top:60px;left:18px;color:#b8472e">This demo needs JavaScript.</p></noscript>
 
-<footer>
-  <a href="/">toffler.dev</a> · <a href="/privacy-en.html">Privacy</a>
-</footer>
+<script src="/demo/kb.js"></script>
+<script>
+"use strict";
+(function(){
+  const KB = window.HT_KB;
+  const out = document.getElementById("out");
+  const term = document.getElementById("term");
+  const inp = document.getElementById("in");
+  const modeEl = document.getElementById("mode");
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
 
+  /* ---- model + library: fetched ONLY after the visitor confirms (see boot) ---- */
+  const MODEL = "HuggingFaceTB/SmolLM2-360M-Instruct";
+  const LIB = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/dist/transformers.min.js";
+  const SIZE_MB = { webgpu: 273, wasm: 365 };
+
+  let mode = "LITE";          // LITE | LOADING | AI
+  let busy = false;           // a reply is being typed/streamed
+  let confirmFn = null;       // pending y/n
+  let worker = null, aiReady = false, device = "";
+  let chat = [];              // rolling AI conversation
+  const hist = []; let hi = 0;
+
+  /* ---------- output ---------- */
+  function scroll(){ term.scrollTop = term.scrollHeight; }
+  function print(text, cls){
+    const d = document.createElement("div");
+    d.className = "ln " + (cls || "");
+    d.textContent = text;
+    out.appendChild(d); scroll();
+    return d;
+  }
+  function printLinks(prefix, links){
+    const d = document.createElement("div");
+    d.className = "ln sys";
+    d.append(prefix);
+    links.forEach(([label, href], i) => {
+      if(i) d.append("  ");
+      const a = document.createElement("a");
+      a.textContent = label; a.href = href;
+      d.append(a);
+    });
+    out.appendChild(d); scroll();
+  }
+  async function typeLine(text, cls, speed){
+    const d = print("", cls);
+    busy = true;
+    if(reduced){ d.textContent = text; }
+    else {
+      const step = 2, ms = speed || 11;
+      for(let i = 0; i < text.length; i += step){
+        d.textContent = text.slice(0, i + step); scroll(); await sleep(ms);
+      }
+    }
+    busy = false;
+    return d;
+  }
+  function setMode(label, cls){
+    modeEl.textContent = label;
+    modeEl.className = cls || "";
+  }
+
+  /* ---------- intro ---------- */
+  async function intro(){
+    print("TOFFLER SYSTEMS", "big");
+    await typeLine("HT-01 // HIGH TORQUE ASSISTANT // DEMO BUILD", "sys", 8);
+    await typeLine("Lite mode: instant answers from a sample FAQ. Type help, or just ask.", "sys", 8);
+    await typeLine("Type boot to wake the AI model. It runs inside your browser; the first load is a large download.", "sys", 8);
+    print("[IT] Demo in inglese. Se attivi l'AI, il modello viene scaricato nel tuo browser da Hugging Face e jsDelivr (server esterni: il tuo indirizzo IP è visibile a loro). Le tue conversazioni restano sul tuo dispositivo. Il modello è piccolo e può sbagliare. Digita \"italiano\" per i dettagli.", "it");
+    inp.focus({preventScroll:true});
+  }
+
+  /* ---------- lite engine: keyword FAQ ---------- */
+  function rank(q){
+    const t = q.toLowerCase();
+    const scored = [];
+    for(const e of KB.entries){
+      let s = 0;
+      for(const raw of e.k){
+        const k = raw.trim();
+        // short keys must match whole words ("ce" must not fire inside "price")
+        const hit = k.length <= 4 ? new RegExp("\\b" + k + "\\b").test(t) : t.includes(k);
+        if(hit) s += k.length > 3 ? 2 : 1;
+      }
+      if(s > 0) scored.push([s, e]);
+    }
+    return scored.sort((a, b) => b[0] - a[0]).map(x => x[1]);
+  }
+  function lite(q){
+    const hits = rank(q);
+    return hits.length ? hits[0].a : KB.fallback;
+  }
+
+  /* ---------- commands ---------- */
+  const HELP = [
+    "help      this list",
+    "about     what this is",
+    "boot      wake the AI model in your browser (asks first)",
+    "lite      back to instant FAQ mode, free the memory",
+    "clear     wipe the screen",
+    "italiano  avviso privacy in italiano",
+    "privacy   privacy notice links",
+    "",
+    "Anything else is a question for HT-01: try quote, lead time, technical specs, warranty."
+  ].join("\n");
+
+  const IT_NOTICE = [
+    "AVVISO (italiano)",
+    "- Questa demo è in inglese.",
+    "- Modalità lite: nessuna richiesta a server esterni; le risposte vengono dalla FAQ di esempio.",
+    "- Modalità AI: al comando boot (dopo la tua conferma) il browser scarica la libreria da cdn.jsdelivr.net e il modello da huggingface.co (circa 273 MB con WebGPU, 365 MB senza). Questi servizi esterni, anche fuori dallo Spazio Economico Europeo, vedono il tuo indirizzo IP.",
+    "- Le conversazioni restano sul tuo dispositivo: non vengono inviate a toffler.dev.",
+    "- Le risposte sono generate da un modello piccolo e possono essere imprecise: non sono impegni commerciali.",
+    "- Informativa completa: /privacy.html"
+  ].join("\n");
+
+  async function handle(raw){
+    const text = raw.trim();
+    if(!text) return;
+    print("> " + text, "usr");
+
+    if(confirmFn){
+      const fn = confirmFn; confirmFn = null;
+      if(/^(y|yes|s|si|sì|ok)$/i.test(text)) return fn();
+      return void print("Cancelled. Staying in lite mode.", "sys");
+    }
+    const c = text.toLowerCase();
+    if(c === "help" || c === "?") return void print(HELP, "sys");
+    if(c === "clear" || c === "cls"){ out.textContent = ""; return; }
+    if(c === "about") return typeLine(KB.entries[KB.entries.length - 1].a, "bot");
+    if(c === "italiano" || c === "it") return void print(IT_NOTICE, "it");
+    if(c === "privacy"){ return printLinks("", [["Privacy (EN)", "/privacy-en.html"], ["Informativa (IT)", "/privacy.html"]]); }
+    if(c === "lite" || c === "unload" || c === "exit"){ return unload(); }
+    if(c === "boot" || c === "boot ai") return boot(false);
+    if(c === "boot cpu") return boot(true);
+
+    if(busy) return;
+    if(mode === "AI" && aiReady) return ask(text);
+    if(mode === "LOADING") print("(model still loading, answering from the lite FAQ)", "sys");
+    return typeLine(lite(text), "bot");
+  }
+
+  /* ---------- AI mode ---------- */
+  const WORKER_SRC = `
+    import { pipeline, TextStreamer, env } from "${LIB}";
+    env.allowLocalModels = false;
+    let gen = null;
+    self.onmessage = async (e) => {
+      const m = e.data;
+      try {
+        if (m.type === "load") {
+          gen = await pipeline("text-generation", m.model, {
+            device: m.device, dtype: m.dtype,
+            progress_callback: p => self.postMessage({ type: "progress", p })
+          });
+          self.postMessage({ type: "ready" });
+        } else if (m.type === "chat") {
+          const streamer = new TextStreamer(gen.tokenizer, {
+            skip_prompt: true, skip_special_tokens: true,
+            callback_function: t => self.postMessage({ type: "token", text: t })
+          });
+          await gen(m.messages, { max_new_tokens: 200, do_sample: false,
+                                  repetition_penalty: 1.1, streamer });
+          self.postMessage({ type: "done" });
+        }
+      } catch (err) {
+        self.postMessage({ type: "error", message: String((err && err.message) || err) });
+      }
+    };`;
+
+  function systemPrompt(facts){
+    return "You are HT-01, a concise and professional assistant for High Torque. " +
+      "Answer the customer by repeating the FACT below, changing as few words as possible, in the language of the question (English or Italian). " +
+      "Add nothing: no number, duration, price, date, certification, reason or promise that is not written in the FACT.\n\nFACT:\n" +
+      facts.map(f => "- " + f).join("\n");
+  }
+
+  async function boot(forceCpu){
+    if(mode !== "LITE") return void print(mode === "AI" ? "AI mode is already on. Type lite to switch off." : "Already loading.", "sys");
+    let gpu = false;
+    try{ gpu = !forceCpu && !!navigator.gpu && !!(await navigator.gpu.requestAdapter()); }catch(_){}
+    device = gpu ? "webgpu" : "wasm";
+    const dtype = gpu ? "q4f16" : "q8";
+    const mb = SIZE_MB[device];
+    const mobile = matchMedia("(pointer:coarse)").matches;
+    print([
+      "BOOT AI MODEL",
+      "model   : SmolLM2 360M Instruct (" + (gpu ? "WebGPU" : "CPU / WASM") + ")",
+      "download: about " + mb + " MB, cached by your browser afterwards",
+      "from    : cdn.jsdelivr.net and huggingface.co (third-party servers see your IP address)",
+      "privacy : your messages stay on this device"
+    ].join("\n"), "sys");
+    if(!gpu) print(forceCpu ? "CPU mode forced: expect slow replies." : "No WebGPU in this browser: it would run on the CPU and be slow. Type boot cpu to try anyway.", "warn");
+    if(!gpu && !forceCpu) return;
+    if(mobile) print("You seem to be on a touch device: this is a big download, Wi-Fi recommended.", "warn");
+    print("Proceed? (y/n)", "sys");
+    confirmFn = () => startModel(dtype, mb);
+  }
+
+  function startModel(dtype, mb){
+    mode = "LOADING"; setMode("LOADING 0%");
+    const src = URL.createObjectURL(new Blob([WORKER_SRC], { type: "text/javascript" }));
+    try{ worker = new Worker(src, { type: "module" }); }
+    catch(err){ mode = "LITE"; setMode("LITE"); return void print("This browser cannot start the AI worker. Staying in lite mode.", "warn"); }
+    const bar = print("", "sys");
+    const files = {};
+    let streamLine = null, reply = "";
+    worker.onmessage = (e) => {
+      const m = e.data;
+      if(m.type === "progress"){
+        const p = m.p || {};
+        if(p.status === "progress" && p.total){
+          files[p.file] = { l: p.loaded, t: p.total };
+          let l = 0, t = 0; for(const k in files){ l += files[k].l; t += files[k].t; }
+          const pct = Math.min(99, Math.round(100 * l / t));
+          const n = Math.round(pct / 4);
+          bar.textContent = "[" + "#".repeat(n) + "-".repeat(25 - n) + "] " + pct + "%  " + Math.round(l / 1e6) + "/" + Math.round(t / 1e6) + " MB";
+          setMode("LOADING " + pct + "%"); scroll();
+        }
+      } else if(m.type === "ready"){
+        aiReady = true; mode = "AI"; setMode("AI · " + (device === "webgpu" ? "WEBGPU" : "CPU"), "ai");
+        bar.textContent = "[#########################] 100%";
+        chat = [];
+        print("AI online. Ask me anything about quotes, lead times, support. Type lite to switch it off.", "sys");
+      } else if(m.type === "token"){
+        reply += m.text;
+        if(!streamLine){ streamLine = print("", "bot"); }
+        streamLine.textContent = reply; scroll();
+      } else if(m.type === "done"){
+        chat.push({ role: "assistant", content: reply.trim() });
+        if(chat.length > 8) chat.splice(0, chat.length - 8);
+        streamLine = null; reply = ""; busy = false;
+      } else if(m.type === "error"){
+        print("AI error: " + m.message, "warn");
+        print("Back to lite mode.", "sys");
+        busy = false; unload(true);
+      }
+    };
+    worker.onerror = () => { print("AI worker failed to load (blocked network or unsupported browser). Back to lite mode.", "warn"); unload(true); };
+    worker._reset = () => { streamLine = null; reply = ""; };
+    worker.postMessage({ type: "load", model: MODEL, device, dtype });
+    print("Downloading " + mb + " MB ... you can keep chatting in lite mode meanwhile.", "sys");
+  }
+
+  function ask(q){
+    const hits = rank(q).slice(0, 2);
+    // nothing in the FAQ matches: a 360M model would improvise, so answer with the fixed fallback instead
+    if(!hits.length) return typeLine(KB.fallbackAi, "bot");
+    busy = true;
+    chat.push({ role: "user", content: q });
+    worker._reset();
+    const messages = [{ role: "system", content: systemPrompt(hits.map(h => h.a)) }].concat(chat.slice(-3));
+    worker.postMessage({ type: "chat", messages });
+  }
+
+  function unload(quiet){
+    if(worker){ worker.terminate(); worker = null; }
+    aiReady = false; mode = "LITE"; chat = []; setMode("LITE");
+    if(!quiet) print("AI off, memory freed. Lite mode.", "sys");
+  }
+
+  /* ---------- input wiring ---------- */
+  document.getElementById("line").addEventListener("submit", e => {
+    e.preventDefault();
+    const v = inp.value; inp.value = "";
+    if(v.trim()){ hist.push(v); hi = hist.length; }
+    handle(v);
+  });
+  inp.addEventListener("keydown", e => {
+    if(e.key === "ArrowUp" && hist.length){ hi = Math.max(0, hi - 1); inp.value = hist[hi]; e.preventDefault(); }
+    else if(e.key === "ArrowDown" && hist.length){ hi = Math.min(hist.length, hi + 1); inp.value = hist[hi] || ""; e.preventDefault(); }
+  });
+  term.addEventListener("click", () => { if(!getSelection().toString()) inp.focus({preventScroll:true}); });
+  document.querySelectorAll(".chips button").forEach(b =>
+    b.addEventListener("click", () => { handle(b.dataset.cmd); inp.focus({preventScroll:true}); }));
+
+  intro();
+})();
+</script>
 </body>
 </html>
