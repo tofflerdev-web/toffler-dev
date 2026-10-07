@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MISSION — TOFFLER</title>
-<meta name="description" content="Toffler mission — cyber, intelligence, and AI integration engineered for decision dominance. Read the introduction document.">
-<link rel="canonical" href="https://toffler.dev/mission.html">
+<title>DEMO — TOFFLER</title>
+<meta name="description" content="Toffler demo — an AI assistant for professional practices. Coming soon.">
+<link rel="canonical" href="https://toffler.dev/demo.html">
 <meta name="theme-color" content="#ffffff">
-<meta name="robots" content="index, follow">
+<meta name="robots" content="noindex">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="TOFFLER">
-<meta property="og:title" content="MISSION — TOFFLER">
-<meta property="og:description" content="Cyber. Intelligence. AI integration. Decision dominance.">
-<meta property="og:url" content="https://toffler.dev/mission.html">
+<meta property="og:title" content="DEMO — TOFFLER">
+<meta property="og:description" content="Toffler demo — coming soon.">
+<meta property="og:url" content="https://toffler.dev/demo.html">
 <meta property="og:image" content="https://toffler.dev/og.png">
 <style>
   :root{
@@ -61,7 +61,7 @@
     background:rgba(61,84,104,.05);outline:none;
   }
   main{
-    max-width:900px;margin:0 auto;
+    max-width:760px;margin:0 auto;
     padding:34px 16px 70px;
   }
   h1{
@@ -70,19 +70,27 @@
     text-align:center;font-weight:400;
     margin-bottom:30px;
   }
-  #viewer{display:flex;flex-direction:column;align-items:center;gap:22px}
-  #viewer canvas{
-    max-width:100%;height:auto;
-    border:1px solid var(--faint);
-    box-shadow:0 8px 30px rgba(16,20,26,.08);
-    background:#fff;
+  .intro{font-size:13px;line-height:1.8;color:var(--dim);margin-bottom:10px}
+  h2{
+    font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+    font-weight:400;color:var(--signal);
+    margin:34px 0 10px;
   }
-  #status{
-    text-align:center;color:var(--dim);
+  p,li{font-size:13px;line-height:1.8}
+  p{margin-bottom:10px}
+  ul{margin:0 0 10px 1.4em}
+  li{margin-bottom:6px}
+  code{background:rgba(61,84,104,.08);padding:1px 5px;font-family:inherit}
+  a{color:var(--signal)}
+  #demo-widget{margin:26px 0 22px}
+  .slot{
+    min-height:380px;
+    display:flex;align-items:center;justify-content:center;
+    border:1px dashed var(--faint);
+    color:var(--dim);
     font-size:11px;letter-spacing:.25em;text-transform:uppercase;
-    padding:40px 0;
   }
-  #fallback{display:none;width:100%;height:82vh;border:1px solid var(--faint)}
+  .note{color:var(--dim)}
   footer{
     border-top:1px solid var(--faint);
     padding:20px 26px;text-align:center;
@@ -102,55 +110,25 @@
 <header>
   <a class="brand" href="/">TOFFLER <b>//</b> RETURN</a>
   <nav class="actions">
-    <a href="/tofflerdev_intro.pdf" download="tofflerdev_intro.pdf">download</a>
-    <a href="/tofflerdev_intro.pdf" target="_blank" rel="noopener">open raw</a>
+    <a href="/mission.html">mission</a>
   </nav>
 </header>
 
 <main>
-  <h1>Mission</h1>
-  <div id="status">LOADING DOCUMENT…</div>
-  <div id="viewer" aria-label="Toffler introduction document"></div>
-  <iframe id="fallback" src="/tofflerdev_intro.pdf" title="Toffler introduction PDF"></iframe>
+  <h1>Demo</h1>
+
+  <p class="intro">A live demonstration of what an AI assistant can do for a professional practice: answer common questions, collect requests, point people to the right person. The interactive demo is being prepared and will appear below.</p>
+
+  <section id="demo-widget" aria-label="Chatbot demo">
+    <div class="slot">DEMO COMING SOON</div>
+  </section>
+
+  <p class="note">Questions in the meantime? <a href="mailto:tofflerdev@proton.me">tofflerdev@proton.me</a></p>
 </main>
 
 <footer>
   <a href="/">toffler.dev</a> · <a href="/privacy-en.html">Privacy</a>
 </footer>
 
-<script src="/vendor/pdfjs/pdf.min.js"></script>
-<script>
-"use strict";
-(function(){
-  const status = document.getElementById("status");
-  const viewer = document.getElementById("viewer");
-  const fallback = document.getElementById("fallback");
-  const URL_PDF = "/tofflerdev_intro.pdf";
-
-  function useFallback(){
-    // pdf.js unavailable — hand rendering to the browser's native reader
-    viewer.style.display = "none";
-    status.style.display = "none";
-    fallback.style.display = "block";
-  }
-
-  if(!window.pdfjsLib){ useFallback(); return; }
-  pdfjsLib.GlobalWorkerOptions.workerSrc = "/vendor/pdfjs/pdf.worker.min.js";
-
-  pdfjsLib.getDocument(URL_PDF).promise.then(async function(pdf){
-    status.style.display = "none";
-    const scale = Math.min(2, (window.devicePixelRatio||1)*1.5);
-    for(let p=1; p<=pdf.numPages; p++){
-      const page = await pdf.getPage(p);
-      const vp = page.getViewport({scale});
-      const canvas = document.createElement("canvas");
-      canvas.width = vp.width; canvas.height = vp.height;
-      canvas.setAttribute("aria-label","Page "+p+" of "+pdf.numPages);
-      viewer.appendChild(canvas);
-      await page.render({canvasContext:canvas.getContext("2d"), viewport:vp}).promise;
-    }
-  }).catch(useFallback);
-})();
-</script>
 </body>
 </html>

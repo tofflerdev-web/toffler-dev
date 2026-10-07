@@ -154,6 +154,15 @@
   #soundctl .led{color:var(--ember)}
   #soundctl.live .led{color:#7fd6a4}
 
+  .legal{
+    position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+    z-index:2;
+    font-size:10px;letter-spacing:.18em;
+    white-space:nowrap;
+  }
+  .legal a{color:var(--dim);text-decoration:none;transition:color .5s}
+  .legal a:hover,.legal a:focus-visible{color:var(--node);outline:none}
+
   @keyframes surface{to{opacity:1}}
   @keyframes pulse{50%{opacity:0}}
 
@@ -198,6 +207,8 @@
 <div class="hud" id="hud-br">
   <button id="soundctl" aria-pressed="false"><span class="led">●</span>&nbsp;SOUND OFF</button>
 </div>
+
+<footer class="legal"><a href="/privacy-en.html">Privacy</a></footer>
 
 <script>
 "use strict";
