@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DEMO — TOFFLER</title>
-<meta name="description" content="HT-01 — an AI assistant terminal for High Torque. Answers instantly; the AI model runs in your own browser.">
+<meta name="description" content="Heidi — a gentle, professional AI assistant terminal by Toffler. Answers instantly; the AI model runs in your own browser.">
 <link rel="canonical" href="https://toffler.dev/demo.html">
 <meta name="theme-color" content="#04050a">
 <meta name="robots" content="noindex">
@@ -78,7 +78,7 @@
   .ln.sys{color:var(--phos-dim)}
   .ln.it{color:var(--signal);opacity:.8;text-shadow:none;font-size:12.5px}
   .ln.warn{color:var(--ember);text-shadow:none}
-  .ln.bot::before{content:"HT-01> ";color:var(--phos-dim)}
+  .ln.bot::before{content:"HEIDI> ";color:var(--phos-dim)}
   .ln a{color:var(--signal);text-decoration:underline;text-underline-offset:3px}
   .ln.big{font-size:clamp(18px,4vw,30px);letter-spacing:.3em;color:#e9fff3;line-height:1.3}
   .cursor{display:inline-block;width:.6em;height:1.05em;background:var(--phos);vertical-align:text-bottom;animation:blink 1.1s steps(2) infinite}
@@ -130,22 +130,22 @@
 <div class="crt">
   <header class="bar">
     <a href="/">TOFFLER <b>//</b> RETURN</a>
-    <span class="title">HT-01 &middot; HIGH TORQUE ASSISTANT</span>
+    <span class="title">HEIDI &middot; TOFFLER AI ASSISTANT</span>
     <span id="mode" aria-live="polite">LITE</span>
   </header>
 
-  <main id="term" role="log" aria-label="HT-01 terminal" tabindex="-1">
+  <main id="term" role="log" aria-label="Heidi terminal" tabindex="-1">
     <div id="out"></div>
     <form id="line" autocomplete="off">
-      <label class="ps1" for="in">visitor@ht01:~$</label>
+      <label class="ps1" for="in">visitor@heidi:~$</label>
       <input id="in" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send" aria-label="Type a message or command">
     </form>
   </main>
 
   <div class="chips" aria-label="Quick commands">
     <button type="button" data-cmd="help">help</button>
-    <button type="button" data-cmd="quote">quote</button>
-    <button type="button" data-cmd="lead time">lead time</button>
+    <button type="button" data-cmd="what do you do">services</button>
+    <button type="button" data-cmd="contact">contact</button>
     <button type="button" data-cmd="boot" class="boot">boot ai</button>
     <button type="button" data-cmd="italiano">italiano</button>
   </div>
@@ -225,9 +225,9 @@
   /* ---------- intro ---------- */
   async function intro(){
     print("TOFFLER SYSTEMS", "big");
-    await typeLine("HT-01 // HIGH TORQUE ASSISTANT // DEMO BUILD", "sys", 8);
-    await typeLine("Lite mode: instant answers from a sample FAQ. Type help, or just ask.", "sys", 8);
-    await typeLine("Type boot to wake the AI model. It runs inside your browser; the first load is a large download.", "sys", 8);
+    await typeLine("HEIDI // TOFFLER AI ASSISTANT // DEMO BUILD", "sys", 8);
+    await typeLine("Lite mode: instant, kind answers from a small FAQ. Type help, or just ask.", "sys", 8);
+    await typeLine("Type boot to wake the AI model: it answers in English or Italian, runs inside your browser, and the first load is a large download.", "sys", 8);
     print("[IT] Demo in inglese. Se attivi l'AI, il modello viene scaricato nel tuo browser da Hugging Face e jsDelivr (server esterni: il tuo indirizzo IP è visibile a loro). Le tue conversazioni restano sul tuo dispositivo. Il modello è piccolo e può sbagliare. Digita \"italiano\" per i dettagli.", "it");
     inp.focus({preventScroll:true});
   }
@@ -263,7 +263,7 @@
     "italiano  avviso privacy in italiano",
     "privacy   privacy notice links",
     "",
-    "Anything else is a question for HT-01: try quote, lead time, technical specs, warranty."
+    "Anything else is a question for Heidi: try services, privacy, pricing, contact."
   ].join("\n");
 
   const IT_NOTICE = [
@@ -289,7 +289,7 @@
     const c = text.toLowerCase();
     if(c === "help" || c === "?") return void print(HELP, "sys");
     if(c === "clear" || c === "cls"){ out.textContent = ""; return; }
-    if(c === "about") return typeLine(KB.entries[KB.entries.length - 1].a, "bot");
+    if(c === "about") return typeLine(KB.about, "bot");
     if(c === "italiano" || c === "it") return void print(IT_NOTICE, "it");
     if(c === "privacy"){ return printLinks("", [["Privacy (EN)", "/privacy-en.html"], ["Informativa (IT)", "/privacy.html"]]); }
     if(c === "lite" || c === "unload" || c === "exit"){ return unload(); }
@@ -331,7 +331,7 @@
     };`;
 
   function systemPrompt(facts){
-    return "You are HT-01, a concise and professional assistant for High Torque. " +
+    return "You are Heidi, the gentle, warm and professional AI assistant of Toffler. " +
       "Answer the customer by repeating the FACT below, changing as few words as possible, in the language of the question (English or Italian). " +
       "Add nothing: no number, duration, price, date, certification, reason or promise that is not written in the FACT.\n\nFACT:\n" +
       facts.map(f => "- " + f).join("\n");
@@ -383,7 +383,7 @@
         aiReady = true; mode = "AI"; setMode("AI · " + (device === "webgpu" ? "WEBGPU" : "CPU"), "ai");
         bar.textContent = "[#########################] 100%";
         chat = [];
-        print("AI online. Ask me anything about quotes, lead times, support. Type lite to switch it off.", "sys");
+        print("AI online. Ask me about Toffler, this demo, privacy, or how to reach the team. Type lite to switch it off.", "sys");
       } else if(m.type === "token"){
         reply += m.text;
         if(!streamLine){ streamLine = print("", "bot"); }
