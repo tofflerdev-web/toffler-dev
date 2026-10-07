@@ -172,9 +172,18 @@
   const sleep = ms => new Promise(r => setTimeout(r, ms));
 
   /* ---- model + library: fetched ONLY after the visitor confirms (see boot) ---- */
-  const MODEL = "HuggingFaceTB/SmolLM2-360M-Instruct";
+  const MODELS = {
+    big:   { id: "HuggingFaceTB/SmolLM2-360M-Instruct", label: "SmolLM2 360M", mb: { webgpu: 273, wasm: 365 } },
+    small: { id: "HuggingFaceTB/SmolLM2-135M-Instruct", label: "SmolLM2 135M (lighter, plainer answers)", mb: { webgpu: 118, wasm: 137 } }
+  };
+  // phones/tablets run out of tab memory with the big model (tab crash after the download): default them to small
+  const MOBILE = matchMedia("(pointer:coarse)").matches || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+                 (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+  const flag = {
+    get(){ try{ return sessionStorage.getItem("heidi-ai-boot"); }catch(_){ return null; } },
+    set(v){ try{ v ? sessionStorage.setItem("heidi-ai-boot", v) : sessionStorage.removeItem("heidi-ai-boot"); }catch(_){} }
+  };
   const LIB = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/dist/transformers.min.js";
-  const SIZE_MB = { webgpu: 273, wasm: 365 };
 
   let mode = "LITE";          // LITE | LOADING | AI
   let busy = false;           // a reply is being typed/streamed
@@ -227,8 +236,12 @@
     print("TOFFLER SYSTEMS", "big");
     await typeLine("HEIDI // TOFFLER AI ASSISTANT // DEMO BUILD", "sys", 8);
     await typeLine("Lite mode: instant, kind answers from a small FAQ. Type help, or just ask.", "sys", 8);
-    await typeLine("Type boot to wake the AI model: it answers in English or Italian, runs inside your browser, and the first load is a large download.", "sys", 8);
+    await typeLine("On a computer, type boot to wake the AI model: it answers in English or Italian, runs inside your browser, and the first load is a large download.", "sys", 8);
     print("[IT] Demo in inglese. Se attivi l'AI, il modello viene scaricato nel tuo browser da Hugging Face e jsDelivr (server esterni: il tuo indirizzo IP è visibile a loro). Le tue conversazioni restano sul tuo dispositivo. Il modello è piccolo e può sbagliare. Digita \"italiano\" per i dettagli.", "it");
+    if(flag.get()){
+      flag.set(null);
+      print("Last time the AI mode did not survive on this device (probably out of memory), so I am in lite mode. Try boot small.", "warn");
+    }
     inp.focus({preventScroll:true});
   }
 
@@ -257,7 +270,7 @@
   const HELP = [
     "help      this list",
     "about     what this is",
-    "boot      wake the AI model in your browser (asks first)",
+    "boot      wake the AI model in your browser (computers only; asks first). Options: boot cpu | boot small",
     "lite      back to instant FAQ mode, free the memory",
     "clear     wipe the screen",
     "italiano  avviso privacy in italiano",
@@ -293,8 +306,7 @@
     if(c === "italiano" || c === "it") return void print(IT_NOTICE, "it");
     if(c === "privacy"){ return printLinks("", [["Privacy (EN)", "/privacy-en.html"], ["Informativa (IT)", "/privacy.html"]]); }
     if(c === "lite" || c === "unload" || c === "exit"){ return unload(); }
-    if(c === "boot" || c === "boot ai") return boot(false);
-    if(c === "boot cpu") return boot(true);
+    if(/^boot(\s|$)/.test(c)) return boot(c.split(/\s+/).slice(1));
 
     if(busy) return;
     if(mode === "AI" && aiReady) return ask(text);
@@ -337,30 +349,43 @@
       facts.map(f => "- " + f).join("\n");
   }
 
-  async function boot(forceCpu){
+  async function boot(args){
     if(mode !== "LITE") return void print(mode === "AI" ? "AI mode is already on. Type lite to switch off." : "Already loading.", "sys");
+    const forceCpu = args.includes("cpu");
+    if(MOBILE && !args.includes("big") && !args.includes("small")){
+      return void print([
+        "AI mode is not offered on phones and tablets yet.",
+        "The models are too heavy for a phone browser (the tab runs out of memory), and the lighter one makes things up.",
+        "Lite mode is instant and accurate here. For the AI mode, please open this page on a computer.",
+        "(Curious? boot small tries the lightweight model anyway. Expect mistakes.)"
+      ].join("\n"), "sys");
+    }
+    const size = args.includes("small") ? "small" : "big";
+    const M = MODELS[size];
     let gpu = false;
     try{ gpu = !forceCpu && !!navigator.gpu && !!(await navigator.gpu.requestAdapter()); }catch(_){}
     device = gpu ? "webgpu" : "wasm";
     const dtype = gpu ? "q4f16" : "q8";
-    const mb = SIZE_MB[device];
-    const mobile = matchMedia("(pointer:coarse)").matches;
+    const mb = M.mb[device];
+    const mobile = MOBILE;
     print([
       "BOOT AI MODEL",
-      "model   : SmolLM2 360M Instruct (" + (gpu ? "WebGPU" : "CPU / WASM") + ")",
+      "model   : " + M.label + " (" + (gpu ? "WebGPU" : "CPU / WASM") + ")",
       "download: about " + mb + " MB, cached by your browser afterwards",
       "from    : cdn.jsdelivr.net and huggingface.co (third-party servers see your IP address)",
       "privacy : your messages stay on this device"
     ].join("\n"), "sys");
     if(!gpu) print(forceCpu ? "CPU mode forced: expect slow replies." : "No WebGPU in this browser: it would run on the CPU and be slow. Type boot cpu to try anyway.", "warn");
     if(!gpu && !forceCpu) return;
-    if(mobile) print("You seem to be on a touch device: this is a big download, Wi-Fi recommended.", "warn");
+    if(mobile && size === "big") print("Touch device + the big model: the browser tab will probably run out of memory and reload.", "warn");
+    else if(size === "small") print("Experimental: the small model may invent details. Anything important, please confirm with the team.", "warn");
     print("Proceed? (y/n)", "sys");
-    confirmFn = () => startModel(dtype, mb);
+    confirmFn = () => startModel(dtype, mb, M.id);
   }
 
-  function startModel(dtype, mb){
+  function startModel(dtype, mb, modelId){
     mode = "LOADING"; setMode("LOADING 0%");
+    flag.set("loading");   // survives a tab crash/reload; cleared once the model is ready or fails cleanly
     const src = URL.createObjectURL(new Blob([WORKER_SRC], { type: "text/javascript" }));
     try{ worker = new Worker(src, { type: "module" }); }
     catch(err){ mode = "LITE"; setMode("LITE"); return void print("This browser cannot start the AI worker. Staying in lite mode.", "warn"); }
@@ -380,7 +405,7 @@
           setMode("LOADING " + pct + "%"); scroll();
         }
       } else if(m.type === "ready"){
-        aiReady = true; mode = "AI"; setMode("AI · " + (device === "webgpu" ? "WEBGPU" : "CPU"), "ai");
+        flag.set(null); aiReady = true; mode = "AI"; setMode("AI · " + (device === "webgpu" ? "WEBGPU" : "CPU"), "ai");
         bar.textContent = "[#########################] 100%";
         chat = [];
         print("AI online. Ask me about Toffler, this demo, privacy, or how to reach the team. Type lite to switch it off.", "sys");
@@ -389,26 +414,40 @@
         if(!streamLine){ streamLine = print("", "bot"); }
         streamLine.textContent = reply; scroll();
       } else if(m.type === "done"){
+        if(streamLine && strayed(reply, lastFacts, lastQ)){
+          reply = lastFacts[0];   // replace the improvisation with the FAQ fact itself
+          streamLine.textContent = reply; scroll();
+        }
         chat.push({ role: "assistant", content: reply.trim() });
         if(chat.length > 8) chat.splice(0, chat.length - 8);
         streamLine = null; reply = ""; busy = false;
       } else if(m.type === "error"){
-        print("AI error: " + m.message, "warn");
+        flag.set(null); print("AI error: " + m.message, "warn");
         print("Back to lite mode.", "sys");
         busy = false; unload(true);
       }
     };
     worker.onerror = () => { print("AI worker failed to load (blocked network or unsupported browser). Back to lite mode.", "warn"); unload(true); };
     worker._reset = () => { streamLine = null; reply = ""; };
-    worker.postMessage({ type: "load", model: MODEL, device, dtype });
+    worker.postMessage({ type: "load", model: modelId, device, dtype });
     print("Downloading " + mb + " MB ... you can keep chatting in lite mode meanwhile.", "sys");
   }
 
+  let lastFacts = [], lastQ = "";
+  /* a tiny model can ignore "use only the FACT": if too many words in the reply appear in neither the FACT nor the question, distrust it */
+  function strayed(reply, facts, q){
+    const words = s => (s.toLowerCase().match(/[a-z\u00e0-\u00f9]{4,}/g) || []);
+    const known = new Set(words(facts.join(" ") + " " + q));
+    const w = words(reply);
+    if(w.length < 4) return false;
+    return w.filter(x => !known.has(x)).length / w.length > 0.75;
+  }
   function ask(q){
     const hits = rank(q).slice(0, 2);
     // nothing in the FAQ matches: a 360M model would improvise, so answer with the fixed fallback instead
     if(!hits.length) return typeLine(KB.fallbackAi, "bot");
     busy = true;
+    lastFacts = hits.map(h => h.a); lastQ = q;
     chat.push({ role: "user", content: q });
     worker._reset();
     const messages = [{ role: "system", content: systemPrompt(hits.map(h => h.a)) }].concat(chat.slice(-3));
@@ -417,7 +456,7 @@
 
   function unload(quiet){
     if(worker){ worker.terminate(); worker = null; }
-    aiReady = false; mode = "LITE"; chat = []; setMode("LITE");
+    flag.set(null); aiReady = false; mode = "LITE"; chat = []; setMode("LITE");
     if(!quiet) print("AI off, memory freed. Lite mode.", "sys");
   }
 
