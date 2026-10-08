@@ -185,6 +185,17 @@
   };
   const LIB = "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/dist/transformers.min.js";
 
+  /* ---------- language: English by default, Italian when the visitor writes Italian ---------- */
+  const IT_W = new Set("ciao buongiorno buonasera salve grazie prego aiuto cosa che chi dove quando perche perch\u00e9 quanto quanti quale quali vorrei posso puoi potete siete sono fate fai fanno avete hai ho non per con una uno il lo gli dei del della nel nella di da su ma anche ancora molto pi\u00f9 tuo tua vostro vostra mio mia nostro studio servizi prezzi costo costa contatti parlare scrivere dati funziona come".split(" "));
+  const EN_W = new Set("hello hi hey thanks thank you what who how why when where which do does can could would please the and are is your our with for about this that have has not offer services price cost contact help".split(" "));
+  let lang = "en";
+  function detect(text){
+    const words = text.toLowerCase().match(/[a-z\u00e0-\u00f9']+/g) || [];
+    let it = 0, en = 0;
+    for(const w of words){ if(IT_W.has(w)) it++; if(EN_W.has(w)) en++; }
+    it += (text.match(/[\u00e0\u00e8\u00e9\u00ec\u00f2\u00f9]/gi) || []).length * 2;
+    if(it > en) lang = "it"; else if(en > it) lang = "en";   // a tie keeps the conversation's current language
+  }
   let mode = "LITE";          // LITE | LOADING | AI
   let busy = false;           // a reply is being typed/streamed
   let confirmFn = null;       // pending y/n
@@ -259,11 +270,12 @@
       }
       if(s > 0) scored.push([s, e]);
     }
-    return scored.sort((a, b) => b[0] - a[0]).map(x => x[1]);
+    const real = scored.filter(x => !x[1].social);
+    return (real.length ? real : scored).sort((a, b) => b[0] - a[0]).map(x => x[1]);
   }
   function lite(q){
     const hits = rank(q);
-    return hits.length ? hits[0].a : KB.fallback;
+    return hits.length ? (lang === "it" ? hits[0].it : hits[0].a) : (lang === "it" ? KB.fallbackIt : KB.fallback);
   }
 
   /* ---------- commands ---------- */
@@ -277,6 +289,17 @@
     "privacy   privacy notice links",
     "",
     "Anything else is a question for Heidi: try services, privacy, pricing, contact."
+  ].join("\n");
+
+  const HELP_IT = [
+    "aiuto     questo elenco",
+    "about     cos'\u00e8 questa demo",
+    "boot      attiva il modello AI nel tuo browser (solo computer; chiede conferma). Opzioni: boot cpu | boot small",
+    "lite      torna alle risposte veloci e libera la memoria",
+    "clear     pulisce lo schermo",
+    "privacy   link all'informativa",
+    "",
+    "Scrivi pure una domanda in italiano o in inglese: prova servizi, privacy, prezzi, contatti."
   ].join("\n");
 
   const IT_NOTICE = [
@@ -300,15 +323,17 @@
       return void print("Cancelled. Staying in lite mode.", "sys");
     }
     const c = text.toLowerCase();
-    if(c === "help" || c === "?") return void print(HELP, "sys");
+    if(c === "help" || c === "?") return void print(lang === "it" ? HELP_IT : HELP, "sys");
     if(c === "clear" || c === "cls"){ out.textContent = ""; return; }
-    if(c === "about") return typeLine(KB.about, "bot");
+    if(c === "about") return typeLine(lang === "it" ? KB.aboutIt : KB.about, "bot");
+    if(c === "aiuto"){ lang = "it"; return void print(HELP_IT, "sys"); }
     if(c === "italiano" || c === "it") return void print(IT_NOTICE, "it");
     if(c === "privacy"){ return printLinks("", [["Privacy (EN)", "/privacy-en.html"], ["Informativa (IT)", "/privacy.html"]]); }
     if(c === "lite" || c === "unload" || c === "exit"){ return unload(); }
     if(/^boot(\s|$)/.test(c)) return boot(c.split(/\s+/).slice(1));
 
-    if(busy) return;
+    while(busy) await sleep(80);   // a message typed while another reply is still being written waits its turn, it is not dropped
+    detect(text);
     if(mode === "AI" && aiReady) return ask(text);
     if(mode === "LOADING") print("(model still loading, answering from the lite FAQ)", "sys");
     return typeLine(lite(text), "bot");
@@ -438,14 +463,18 @@
   function strayed(reply, facts, q){
     const words = s => (s.toLowerCase().match(/[a-z\u00e0-\u00f9]{4,}/g) || []);
     const known = new Set(words(facts.join(" ") + " " + q));
+    const source = facts.join(" ") + " " + q;
+    if((reply.match(/\d+/g) || []).some(n => !source.includes(n))) return true;   // an invented number, price or date
     const w = words(reply);
-    if(w.length < 4) return false;
-    return w.filter(x => !known.has(x)).length / w.length > 0.75;
+    if(!w.length) return false;
+    return w.filter(x => !known.has(x)).length / w.length > 0.5;
   }
   function ask(q){
     const hits = rank(q).slice(0, 2);
     // nothing in the FAQ matches: a 360M model would improvise, so answer with the fixed fallback instead
-    if(!hits.length) return typeLine(KB.fallbackAi, "bot");
+    if(!hits.length) return typeLine(lang === "it" ? KB.fallbackAiIt : KB.fallbackAi, "bot");
+    // the small model is not reliable in Italian (it invented a price in testing): answer with the curated Italian text itself
+    if(lang === "it") return typeLine(hits[0].it, "bot");
     busy = true;
     lastFacts = hits.map(h => h.a); lastQ = q;
     chat.push({ role: "user", content: q });
@@ -461,11 +490,14 @@
   }
 
   /* ---------- input wiring ---------- */
+  // every message goes through one queue, so replies always come back in the order the questions were asked
+  let queue = Promise.resolve();
+  const enqueue = v => { queue = queue.then(() => handle(v)).catch(() => {}); };
   document.getElementById("line").addEventListener("submit", e => {
     e.preventDefault();
     const v = inp.value; inp.value = "";
     if(v.trim()){ hist.push(v); hi = hist.length; }
-    handle(v);
+    enqueue(v);
   });
   inp.addEventListener("keydown", e => {
     if(e.key === "ArrowUp" && hist.length){ hi = Math.max(0, hi - 1); inp.value = hist[hi]; e.preventDefault(); }
@@ -473,7 +505,7 @@
   });
   term.addEventListener("click", () => { if(!getSelection().toString()) inp.focus({preventScroll:true}); });
   document.querySelectorAll(".chips button").forEach(b =>
-    b.addEventListener("click", () => { handle(b.dataset.cmd); inp.focus({preventScroll:true}); }));
+    b.addEventListener("click", () => { enqueue(b.dataset.cmd); inp.focus({preventScroll:true}); }));
 
   intro();
 })();
