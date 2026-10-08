@@ -196,7 +196,7 @@
     background:linear-gradient(180deg,rgba(15,19,30,.97),rgba(6,8,14,.97));
     border:1px solid var(--faint);
     box-shadow:0 0 0 1px rgba(159,180,199,.05),0 40px 90px rgba(0,0,0,.65),0 0 70px rgba(184,71,46,.09);
-    overflow:hidden;
+    overflow-x:hidden;overflow-y:auto;max-height:calc(100dvh - 24px);
   }
   dialog#menu[open] .panel{animation:rise .55s cubic-bezier(.2,.8,.2,1) both}
   /* ember scan line sweeping across the top edge */
@@ -261,6 +261,7 @@
   dialog#menu[open] nav a:nth-child(2){animation-delay:.22s}
   dialog#menu[open] nav a:nth-child(3){animation-delay:.30s}
   dialog#menu[open] nav a:nth-child(4){animation-delay:.38s}
+  dialog#menu[open] nav a:nth-child(5){animation-delay:.46s}
   .pfoot{
     display:flex;justify-content:space-between;gap:12px;
     font-size:9px;letter-spacing:.25em;text-transform:uppercase;color:var(--dim);
@@ -578,7 +579,8 @@ btn.addEventListener("click", ()=>{
       <a href="mailto:tofflerdev@proton.me"><span class="n">01</span><span>establish contact</span><span class="go" aria-hidden="true">&rarr;</span><small>open a channel</small></a>
       <a href="/mission.html"><span class="n">02</span><span>mission</span><span class="go" aria-hidden="true">&rarr;</span><small>the introduction document</small></a>
       <a href="/demo.html"><span class="n">03</span><span>demo</span><span class="go" aria-hidden="true">&rarr;</span><small>ai assistant &middot; live terminal</small></a>
-      <a href="/privacy-en.html"><span class="n">04</span><span>privacy note</span><span class="go" aria-hidden="true">&rarr;</span><small>how we handle data</small></a>
+      <a href="/studi"><span class="n">04</span><span>for professionals</span><span class="go" aria-hidden="true">&rarr;</span><small>ai for your practice &middot; it / en</small></a>
+      <a href="/privacy-en.html"><span class="n">05</span><span>privacy note</span><span class="go" aria-hidden="true">&rarr;</span><small>how we handle data</small></a>
     </nav>
     <div class="pfoot"><span>ESC to close</span><a href="/privacy.html" lang="it" hreflang="it">informativa privacy &middot; IT</a></div>
   </div>
