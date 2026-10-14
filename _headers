@@ -1,0 +1,15 @@
+# Cloudflare Pages response headers — served for every path.
+# Rollback: delete this file (git revert the commit); nothing else depends on it.
+#
+# Deliberately NO script-src/default-src here: most pages use inline scripts and
+# demo.html loads jsDelivr + a module Worker, so a strict site-wide script policy
+# would break them. The tools under /tools/ carry their own strict meta CSP.
+# Strict script-src (hashes/nonces) is a follow-up, trial it in Report-Only first.
+/*
+  Strict-Transport-Security: max-age=31536000
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), serial=(), bluetooth=()
+  Cross-Origin-Opener-Policy: same-origin
+  Content-Security-Policy: object-src 'none'; base-uri 'self'; frame-ancestors 'self'; form-action 'self'
