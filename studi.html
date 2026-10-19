@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="it">
+<html lang="it" data-native="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,6 +10,7 @@
 <link rel="alternate" hreflang="en" href="https://toffler.dev/en/studi">
 <link rel="alternate" hreflang="x-default" href="https://toffler.dev/studi">
 <meta name="theme-color" content="#fbfbf9">
+<script src="/theme.js"></script>
 <meta name="robots" content="index, follow">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="toffler.dev">
@@ -22,13 +23,14 @@
 try{if(new URLSearchParams(location.search).get("utm_source")==="card")history.replaceState(null,"","/card-studi")}catch(e){}
 </script>
 <style>
-  :root{--paper:#fbfbf9;--ink:#171b22;--dim:#566170;--line:#dde1e6;--accent:#3d5468;--ember:#b8472e;--card:#ffffff;--warn-bg:#fff6e0;--warn-line:#e6c97a}
+  :root{--paper:#fbfbf9;--ink:#171b22;--dim:#566170;--line:#dde1e6;--accent:#3d5468;--ember:#b8472e;--card:#ffffff;--warn-bg:#fff6e0;--warn-line:#e6c97a;--body2:#2b323c;--hdr:rgba(251,251,249,.94);--on-accent:#fff;color-scheme:light}
+  :root[data-theme="dark"]{--paper:#0e1116;--ink:#e6eaf0;--dim:#9aa5b3;--line:#2a3240;--accent:#8fb0cc;--ember:#e2694a;--card:#151a22;--warn-bg:#2a2412;--warn-line:#6b5a22;--body2:#c5ccd6;--hdr:rgba(14,17,22,.94);--on-accent:#0e1116;color-scheme:dark}
   *{margin:0;padding:0;box-sizing:border-box}
   html{-webkit-text-size-adjust:100%}
   body{background:var(--paper);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:18px;line-height:1.6;-webkit-font-smoothing:antialiased}
   a{color:var(--accent)}
   .wrap{max-width:760px;margin:0 auto;padding:0 20px}
-  header{border-bottom:1px solid var(--line);background:rgba(251,251,249,.94)}
+  header{border-bottom:1px solid var(--line);background:var(--hdr)}
   header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:60px}
   .brand{font-weight:700;letter-spacing:.02em;text-decoration:none;color:var(--ink)}
   .brand b{color:var(--ember);font-weight:700}
@@ -39,16 +41,16 @@ try{if(new URLSearchParams(location.search).get("utm_source")==="card")history.r
   h2{font-size:clamp(23px,5vw,29px);line-height:1.25;margin-bottom:14px}
   h3{font-size:19px;margin-bottom:6px}
   p{margin-bottom:14px}
-  .lead{font-size:clamp(19px,4.4vw,22px);color:#2b323c}
+  .lead{font-size:clamp(19px,4.4vw,22px);color:var(--body2)}
   .aud{color:var(--dim);font-size:16px}
   .btns{display:flex;flex-direction:column;gap:12px;margin:24px 0 8px}
   .btn{display:flex;align-items:center;justify-content:center;min-height:54px;padding:0 26px;border-radius:12px;font-weight:600;font-size:18px;text-decoration:none;border:2px solid var(--accent)}
-  .btn.primary{background:var(--accent);color:#fff}
+  .btn.primary{background:var(--accent);color:var(--on-accent)}
   .btn.secondary{background:transparent;color:var(--accent)}
   .btn:focus-visible,.lang:focus-visible,a:focus-visible{outline:3px solid var(--ember);outline-offset:3px}
   .grid{display:grid;gap:14px;margin:18px 0}
   .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
-  .card p{margin:0;color:#2b323c;font-size:17px}
+  .card p{margin:0;color:var(--body2);font-size:17px}
   .note{color:var(--dim);font-size:16px}
   .warn{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:12px;padding:14px 16px;font-weight:600;margin:16px 0}
   .tool a{font-weight:600}
