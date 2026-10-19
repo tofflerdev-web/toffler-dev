@@ -6,7 +6,7 @@
 <title>TOFFLER — decision dominance</title>
 <meta name="description" content="Toffler — cyber, intelligence, and AI integration capabilities engineered for decision dominance. Establish contact.">
 <link rel="canonical" href="https://toffler.dev/">
-<meta name="theme-color" content="#04050a">
+<meta name="theme-color" id="tc" content="#04050a">
 <meta name="robots" content="index, follow">
 
 <!-- OpenGraph -->
@@ -48,12 +48,45 @@
     --faint:#2a3140;
     --ember:#b8472e;
     --signal:#9fb4c7;
+    --strong:#fff;
+    --glow:rgba(184,71,46,.35);
+    --wash:rgba(159,180,199,.04);
+    --hair:rgba(42,49,64,.6);
+    --panel-a:rgba(15,19,30,.97);
+    --panel-b:rgba(6,8,14,.97);
+    --veil-a:rgba(20,26,40,.55);
+    --veil-b:rgba(4,5,10,.88);
+    --shadow:rgba(0,0,0,.65);
+    --halo:rgba(184,71,46,.09);
+    --live:#7fd6a4;
+    color-scheme:dark;
+  }
+  :root[data-theme="light"]{
+    --void:#eceff3;
+    --node:#141a22;
+    --dim:#586270;
+    --faint:#c3cad4;
+    --ember:#b8472e;
+    --signal:#3b5873;
+    --strong:#000;
+    --glow:rgba(184,71,46,.2);
+    --wash:rgba(59,88,115,.07);
+    --hair:rgba(120,134,152,.35);
+    --panel-a:rgba(250,251,253,.97);
+    --panel-b:rgba(236,239,243,.97);
+    --veil-a:rgba(236,239,243,.55);
+    --veil-b:rgba(214,220,228,.9);
+    --shadow:rgba(30,40,60,.25);
+    --halo:rgba(184,71,46,.07);
+    --live:#1f8a52;
+    color-scheme:light;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%}
   body{
     background:var(--void);
     color:var(--node);
+    transition:background .5s ease,color .5s ease;
     font-family:"IBM Plex Mono","SF Mono","Cascadia Mono","JetBrains Mono",Consolas,monospace;
     overflow:hidden;
     cursor:crosshair;
@@ -94,7 +127,7 @@
     margin-left:2px;
     animation:pulse 1.1s steps(2) infinite;
   }
-  .line .dominance{color:#fff;text-shadow:0 0 18px rgba(184,71,46,.35)}
+  .line .dominance{color:var(--strong);text-shadow:0 0 18px var(--glow)}
   .contact{
     margin-top:44px;
     pointer-events:auto;
@@ -119,7 +152,7 @@
   .contact a:hover,.contact a:focus-visible{
     color:var(--node);
     border-color:var(--signal);
-    background:rgba(159,180,199,.04);
+    background:var(--wash);
     outline:none;
   }
   .contact a:focus-visible{border-color:var(--ember)}
@@ -142,7 +175,7 @@
   #hud-bl{bottom:22px;left:26px}
   #hud-br{bottom:22px;right:26px;text-align:right}
 
-  #soundctl{
+  #soundctl,#themectl{
     pointer-events:auto;cursor:pointer;
     background:none;border:none;
     color:var(--dim);
@@ -150,9 +183,11 @@
     padding:6px 0;
     transition:color .5s;
   }
-  #soundctl:hover,#soundctl:focus-visible{color:var(--node);outline:none}
+  #soundctl:hover,#soundctl:focus-visible,#themectl:hover,#themectl:focus-visible{color:var(--node);outline:none}
   #soundctl .led{color:var(--ember)}
-  #soundctl.live .led{color:#7fd6a4}
+  #soundctl.live .led{color:var(--live)}
+  #themectl{display:block;margin-left:auto}
+  #themectl .led{color:var(--signal);font-family:"DejaVu Sans",system-ui,sans-serif;font-size:12px;line-height:1}
 
   .legal{
     position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
@@ -175,7 +210,7 @@
   .contact button.menu .bars{display:inline-block;margin-right:.9em;letter-spacing:0;color:var(--ember)}
   .contact button.menu:hover,.contact button.menu:focus-visible{
     color:var(--node);border-color:var(--signal);
-    background:rgba(159,180,199,.04);outline:none;
+    background:var(--wash);outline:none;
   }
   .contact button.menu:focus-visible{border-color:var(--ember)}
 
@@ -185,7 +220,7 @@
     font-family:inherit;
   }
   dialog#menu::backdrop{
-    background:radial-gradient(ellipse at center,rgba(20,26,40,.55),rgba(4,5,10,.88));
+    background:radial-gradient(ellipse at center,var(--veil-a),var(--veil-b));
     backdrop-filter:blur(7px);-webkit-backdrop-filter:blur(7px);
   }
   dialog#menu[open]::backdrop{animation:veil .5s ease both}
@@ -193,9 +228,9 @@
     position:relative;
     width:min(460px,calc(100vw - 32px));
     padding:26px 28px 22px;
-    background:linear-gradient(180deg,rgba(15,19,30,.97),rgba(6,8,14,.97));
+    background:linear-gradient(180deg,var(--panel-a),var(--panel-b));
     border:1px solid var(--faint);
-    box-shadow:0 0 0 1px rgba(159,180,199,.05),0 40px 90px rgba(0,0,0,.65),0 0 70px rgba(184,71,46,.09);
+    box-shadow:0 0 0 1px var(--wash),0 40px 90px var(--shadow),0 0 70px var(--halo);
     overflow-x:hidden;overflow-y:auto;max-height:calc(100dvh - 24px);
   }
   dialog#menu[open] .panel{animation:rise .55s cubic-bezier(.2,.8,.2,1) both}
@@ -237,7 +272,7 @@
     padding:17px 12px 17px 10px;
     color:var(--node);text-decoration:none;
     font-size:13px;letter-spacing:.3em;text-transform:uppercase;
-    border-bottom:1px solid rgba(42,49,64,.6);
+    border-bottom:1px solid var(--hair);
     border-left:2px solid transparent;
     transition:background .35s,border-color .35s,padding-left .35s,color .35s;
     opacity:0;
@@ -252,8 +287,8 @@
     font-size:9px;letter-spacing:.22em;color:var(--dim);
   }
   #menu nav a:hover,#menu nav a:focus-visible{
-    background:rgba(159,180,199,.05);border-left-color:var(--ember);
-    padding-left:16px;color:#fff;outline:none;
+    background:var(--wash);border-left-color:var(--ember);
+    padding-left:16px;color:var(--strong);outline:none;
   }
   #menu nav a:hover .go,#menu nav a:focus-visible .go{opacity:1;transform:none}
   dialog#menu[open] nav a{animation:item .5s ease both}
@@ -292,6 +327,10 @@
   }
 </style>
 <script>
+/* theme: applied before first paint so a saved light choice never flashes dark. Default = dark. */
+try{if(localStorage.getItem("toffler-theme")==="light"){document.documentElement.setAttribute("data-theme","light");document.getElementById("tc").content="#eceff3"}}catch(e){}
+</script>
+<script>
 /* QR scans: Cloudflare Web Analytics drops query strings, so file ?utm_source=card
    visits under their own path (/card, see card.html) before the beacon reads the URL. */
 try{if(location.pathname==="/"&&new URLSearchParams(location.search).get("utm_source")==="card")history.replaceState(null,"","/card")}catch(e){}
@@ -325,11 +364,13 @@ try{if(location.pathname==="/"&&new URLSearchParams(location.search).get("utm_so
   <span>DRIFT <b id="drift">0.000</b></span>
 </div>
 <div class="hud" id="hud-br">
+  <button id="themectl" aria-pressed="false" aria-label="Switch colour theme"><span class="led">&#9680;</span>&nbsp;THEME DARK</button>
   <button id="soundctl" aria-pressed="false"><span class="led">●</span>&nbsp;SOUND OFF</button>
 </div>
 
 <footer class="legal"><a href="/privacy-en.html">Privacy</a></footer>
 
+<script src="/signal.js"></script>
 <script>
 "use strict";
 const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -451,10 +492,20 @@ addEventListener("pointerdown", e=>{
 });
 
 const LINK = innerWidth < 640 ? 90 : 120;
+const SPEED = 1.9; // field tempo, 1 = the original drift (frame-time normalised below)
+
+/* canvas ink per theme, as ready-made rgba( prefixes: nothing is built per-frame beyond the alpha */
+const INKS = {
+  dark: {node:"rgba(223,230,238,", link:"rgba(159,180,199,", ember:"rgba(184,71,46,", boost:1},
+  light:{node:"rgba(20,26,34,",    link:"rgba(59,88,115,",   ember:"rgba(184,71,46,", boost:1.7}
+};
+let ink = INKS.dark;
 let attention = 0; // 0..1 — how intently the field regards the visitor
+let lastT = performance.now();
 
 function frame(now){
   requestAnimationFrame(frame);
+  const dt = Math.min(3, Math.max(0.2, (now-lastT)/16.667)) * SPEED; lastT = now;
   ctx.clearRect(0,0,W,H);
   ctx.save(); ctx.scale(DPR,DPR);
 
@@ -466,18 +517,18 @@ function frame(now){
 
   for(const n of nodes){
     if(!reduced){
-      n.x += n.vx; n.y += n.vy;
+      n.x += n.vx*dt; n.y += n.vy*dt;
       // gentle lean toward the cursor when near
       const dx = cursor.x-n.x, dy = cursor.y-n.y;
       const d2 = dx*dx+dy*dy;
       if(cursor.seen && d2 < 220*220){
         const d = Math.sqrt(d2)||1;
-        n.x += (dx/d)*0.06; n.y += (dy/d)*0.06;
+        n.x += (dx/d)*0.06*dt; n.y += (dy/d)*0.06*dt;
       }
       // during attention, the whole field slowly gathers toward where you stopped
       if(attention>0.02){
-        n.x += (cursor.x-n.x)*0.0006*attention;
-        n.y += (cursor.y-n.y)*0.0006*attention;
+        n.x += (cursor.x-n.x)*0.0006*attention*dt;
+        n.y += (cursor.y-n.y)*0.0006*attention*dt;
       }
       if(n.x<-20)n.x=innerWidth+20; if(n.x>innerWidth+20)n.x=-20;
       if(n.y<-20)n.y=innerHeight+20; if(n.y>innerHeight+20)n.y=-20;
@@ -496,10 +547,10 @@ function frame(now){
         const mx=(a.x+b.x)/2, my=(a.y+b.y)/2;
         const cd=Math.hypot(mx-cursor.x,my-cursor.y);
         const focus = attention * Math.max(0,1-cd/260);
-        const alpha = (1-d/LINK)*(0.05+0.35*focus);
+        const alpha = (1-d/LINK)*(0.05+0.35*focus)*ink.boost;
         ctx.strokeStyle = focus>0.25
-          ? `rgba(184,71,46,${alpha})`
-          : `rgba(159,180,199,${alpha})`;
+          ? `${ink.ember}${alpha})`
+          : `${ink.link}${alpha})`;
         ctx.lineWidth = 0.6;
         ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
       }
@@ -512,57 +563,42 @@ function frame(now){
     const focus = attention * Math.max(0,1-cd/220);
     const ember = focus>0.3 && n.w>0.7;
     ctx.fillStyle = ember
-      ? `rgba(184,71,46,${0.5+0.5*focus})`
-      : `rgba(223,230,238,${0.25+0.5*focus})`;
+      ? `${ink.ember}${0.5+0.5*focus})`
+      : `${ink.node}${Math.min(1,(0.25+0.5*focus)*ink.boost)})`;
     ctx.beginPath(); ctx.arc(n.x,n.y,n.r+(ember?0.6:0),0,7); ctx.fill();
   }
   ctx.restore();
 }
 requestAnimationFrame(frame);
 
-/* ============ procedural drone ============ */
+/* ============ theme ============ */
+const themeBtn = document.getElementById("themectl");
+const themeMeta = document.getElementById("tc");
+function applyTheme(light, save){
+  if(light) document.documentElement.setAttribute("data-theme","light");
+  else document.documentElement.removeAttribute("data-theme");
+  ink = light ? INKS.light : INKS.dark;
+  themeMeta.content = light ? "#eceff3" : "#04050a";
+  themeBtn.innerHTML = '<span class="led">&#9680;</span>&nbsp;THEME ' + (light ? "LIGHT" : "DARK");
+  themeBtn.setAttribute("aria-pressed", light ? "true" : "false");
+  if(save){ try{ localStorage.setItem("toffler-theme", light ? "light" : "dark"); }catch(e){} }
+}
+applyTheme(document.documentElement.getAttribute("data-theme")==="light", false);
+themeBtn.addEventListener("click", ()=>applyTheme(document.documentElement.getAttribute("data-theme")!=="light", true));
+
+/* ============ sound: static -> robo glitch -> static, looping (see /signal.js) ============ */
 const btn = document.getElementById("soundctl");
 let audio=null;
 btn.addEventListener("click", ()=>{
   if(audio){ // off
-    audio.master.gain.linearRampToValueAtTime(0.0001, audio.ctx.currentTime+1.2);
-    setTimeout(()=>audio.ctx.close(), 1400);
+    audio.stop();
     audio=null;
     btn.innerHTML='<span class="led">●</span>&nbsp;SOUND OFF';
     btn.classList.remove("live");
     btn.setAttribute("aria-pressed","false");
     return;
   }
-  const ctxA = new (window.AudioContext||window.webkitAudioContext)();
-  const master = ctxA.createGain(); master.gain.value=0.0001;
-  master.connect(ctxA.destination);
-
-  // two detuned low oscillators + a fifth above, all slowly breathing
-  const freqs=[55, 55.7, 82.4];
-  const oscs = freqs.map((f,i)=>{
-    const o=ctxA.createOscillator(); o.type=i<2?"sine":"triangle"; o.frequency.value=f;
-    const g=ctxA.createGain(); g.gain.value=i<2?0.5:0.12;
-    const lfo=ctxA.createOscillator(); lfo.frequency.value=0.05+i*0.021;
-    const lg=ctxA.createGain(); lg.gain.value=i<2?0.18:0.06;
-    lfo.connect(lg); lg.connect(g.gain);
-    o.connect(g); g.connect(master);
-    o.start(); lfo.start();
-    return o;
-  });
-
-  // filtered noise — distant wind through the machine
-  const len=ctxA.sampleRate*2;
-  const nb=ctxA.createBuffer(1,len,ctxA.sampleRate);
-  const data=nb.getChannelData(0);
-  for(let i=0;i<len;i++) data[i]=Math.random()*2-1;
-  const src=ctxA.createBufferSource(); src.buffer=nb; src.loop=true;
-  const lp=ctxA.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=340; lp.Q.value=0.4;
-  const ng=ctxA.createGain(); ng.gain.value=0.05;
-  src.connect(lp); lp.connect(ng); ng.connect(master);
-  src.start();
-
-  master.gain.linearRampToValueAtTime(0.16, ctxA.currentTime+4);
-  audio={ctx:ctxA, master, oscs};
+  audio = TofflerSignal.play();
   btn.innerHTML='<span class="led">●</span>&nbsp;SOUND LIVE';
   btn.classList.add("live");
   btn.setAttribute("aria-pressed","true");
