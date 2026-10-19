@@ -6,6 +6,7 @@
 <title>TOFFLER — signal lost</title>
 <meta name="description" content="404 — no node answers at this address.">
 <meta name="theme-color" content="#04050a">
+<script src="/theme.js"></script>
 <meta name="robots" content="noindex">
 <style>
   :root{
@@ -15,6 +16,23 @@
     --faint:#2a3140;
     --ember:#b8472e;
     --signal:#9fb4c7;
+    --strong:#fff;
+    --glow:rgba(184,71,46,.35);
+    --soft:rgba(159,180,199,.18);
+    --wash:rgba(159,180,199,.04);
+    color-scheme:dark;
+  }
+  :root[data-theme="light"]{
+    --void:#eceff3;
+    --node:#141a22;
+    --dim:#586270;
+    --faint:#c3cad4;
+    --signal:#3b5873;
+    --strong:#000;
+    --glow:rgba(184,71,46,.2);
+    --soft:rgba(59,88,115,.15);
+    --wash:rgba(59,88,115,.07);
+    color-scheme:light;
   }
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{height:100%}
@@ -50,7 +68,7 @@
     letter-spacing:.3em;
     padding-left:.3em;
     color:var(--node);
-    text-shadow:0 0 24px rgba(159,180,199,.18);
+    text-shadow:0 0 24px var(--soft);
   }
   .line{
     margin-top:22px;
@@ -58,7 +76,7 @@
     letter-spacing:.14em;
     color:var(--node);
   }
-  .line .lost{color:#fff;text-shadow:0 0 18px rgba(184,71,46,.35)}
+  .line .lost{color:var(--strong);text-shadow:0 0 18px var(--glow)}
   .line .caret{
     display:inline-block;width:.55em;height:1.05em;
     background:var(--signal);
@@ -95,7 +113,7 @@
   .contact a:hover,.contact a:focus-visible{
     color:var(--node);
     border-color:var(--signal);
-    background:rgba(159,180,199,.04);
+    background:var(--wash);
     outline:none;
   }
   .contact a:focus-visible{border-color:var(--ember)}
