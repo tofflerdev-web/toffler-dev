@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Website templates for small businesses — toffler.dev</title>
+<meta name="description" content="Two ready-made websites for small businesses: a pastel online shop and an image-led B&amp;B site. Scroll the live previews, then we make one yours.">
+<link rel="canonical" href="https://toffler.dev/portfolio/">
+<meta name="theme-color" content="#0C0F13">
+<script src="/theme.js"></script>
+<meta name="robots" content="index, follow">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="toffler.dev">
+<meta property="og:title" content="Website templates for small businesses — toffler.dev">
+<meta property="og:description" content="Two ready-made websites for small businesses: a pastel online shop and an image-led B&amp;B site.">
+<meta property="og:url" content="https://toffler.dev/portfolio/">
+<meta property="og:image" content="https://toffler.dev/portfolio/img/shop-bordeaux.jpg">
+</head>
+<body>
+<style>
+/* Layout: dark stage so two very different templates (pastel shop, stone-and-green stay) both pop.
+   Hero with two overlapping browser frames, one section per template with scrollable desktop + phone frames, compare table, process, CTA.
+   Dark by default with a full light palette and a toggle (saved per viewer); each template section carries a glow in its own colour. */
+:root{
+  --stage:#0C0F13; --panel:#141920; --panel2:#1B222B; --line:#2A323D; --line2:#4a5565;
+  --text:#EEEAE2; --mute:#A3ACB7;
+  --accent:#F1D38A;                       /* text + graphics accent */
+  --btn:#F1D38A; --btn-hover:#f7e1a6; --btn-bd:#F1D38A; --on-btn:#1A1405;
+  --bar:rgba(12,15,19,.86); --sh:rgba(0,0,0,.55); --ring:rgba(255,255,255,.08); --cta-glow:rgba(241,211,138,.18);
+  --shop-glow:rgba(190,60,110,.30); --stay-glow:rgba(70,130,95,.34);
+  --display:ui-rounded,"Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif;
+  --body:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  color-scheme:dark;
+}
+/* Light palette: same roles, accent text deepened to amber so it keeps contrast on a pale ground */
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --stage:#F5F3EE; --panel:#FFFFFF; --panel2:#ECE9E1; --line:#DAD5C9; --line2:#B5AFA1;
+  --text:#16191E; --mute:#566170; --accent:#8A5A00;
+  --btn:#F0C960; --btn-hover:#E8BC47; --btn-bd:#BF9530; --on-btn:#1A1405;
+  --bar:rgba(245,243,238,.88); --sh:rgba(40,32,18,.20); --ring:rgba(0,0,0,.08); --cta-glow:rgba(240,200,100,.38);
+  --shop-glow:rgba(190,60,110,.15); --stay-glow:rgba(70,130,95,.18); color-scheme:light}}
+:root[data-theme="light"]{
+  --stage:#F5F3EE; --panel:#FFFFFF; --panel2:#ECE9E1; --line:#DAD5C9; --line2:#B5AFA1;
+  --text:#16191E; --mute:#566170; --accent:#8A5A00;
+  --btn:#F0C960; --btn-hover:#E8BC47; --btn-bd:#BF9530; --on-btn:#1A1405;
+  --bar:rgba(245,243,238,.88); --sh:rgba(40,32,18,.20); --ring:rgba(0,0,0,.08); --cta-glow:rgba(240,200,100,.38);
+  --shop-glow:rgba(190,60,110,.15); --stay-glow:rgba(70,130,95,.18); color-scheme:light}
+:root[data-theme="dark"]{color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--stage);color:var(--text);font:400 17px/1.65 var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+img{display:block;max-width:100%}
+h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.02;margin:0;letter-spacing:-.02em;text-wrap:balance}
+p{margin:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.wrap{max-width:1280px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.kicker{font:600 12px/1 var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 28px;border-radius:999px;background:var(--btn);color:var(--on-btn);font:700 15px var(--body);text-decoration:none;border:1.5px solid var(--btn-bd);transition:transform .2s,background .2s}
+.btn:hover{transform:translateY(-2px);background:var(--btn-hover)}
+.btn.ghost{background:transparent;color:var(--text);border-color:var(--line2)}
+.btn.ghost:hover{background:var(--panel2);border-color:var(--text)}
+
+/* top bar */
+header.top{position:sticky;top:0;z-index:30;padding-top:env(safe-area-inset-top,0px);background:var(--bar);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:26px;min-height:64px}
+.mark{font:700 21px/1 var(--display);text-decoration:none;letter-spacing:-.02em;margin-right:auto}
+.mark span{color:var(--accent)}
+.top nav{display:flex;gap:26px}
+.top nav a{font:600 13px/1 var(--body);letter-spacing:.06em;text-decoration:none;color:var(--mute);padding:10px 0}
+.top nav a:hover{color:var(--text)}
+.top .btn{min-height:42px;padding:0 20px;font-size:13px}
+.theme{width:42px;height:42px;flex:none;border-radius:50%;border:1px solid var(--line2);background:transparent;color:var(--text);cursor:pointer;display:grid;place-items:center;padding:0;transition:background .2s,border-color .2s}
+.theme:hover{background:var(--panel2);border-color:var(--text)}
+.theme svg{width:20px;height:20px;display:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+:root[data-theme="dark"] .theme .sun,:root[data-theme="light"] .theme .moon{display:block}
+@media (max-width:760px){.top nav{display:none}}
+
+/* hero */
+.hero{padding-block:clamp(48px,8vw,110px) clamp(56px,8vw,100px);position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:-20% -10% auto auto;width:70%;aspect-ratio:1;background:radial-gradient(closest-side,var(--shop-glow),transparent);pointer-events:none}
+.hero::after{content:"";position:absolute;inset:auto auto -30% -15%;width:60%;aspect-ratio:1;background:radial-gradient(closest-side,var(--stay-glow),transparent);pointer-events:none}
+.hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1.12fr;gap:clamp(32px,5vw,72px);align-items:center}
+.hero h1{font-size:clamp(3rem,7.4vw,6.6rem);margin:22px 0 24px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero .sub{color:var(--mute);max-width:46ch;font-size:1.12rem;margin-bottom:34px}
+.hero .acts{display:flex;gap:12px;flex-wrap:wrap}
+.proof{display:flex;gap:28px;flex-wrap:wrap;margin-top:40px;padding-top:26px;border-top:1px solid var(--line);color:var(--mute);font-size:14px}
+.proof b{display:block;font:700 1.7rem/1 var(--display);color:var(--text);margin-bottom:6px}
+.stage-hero{position:relative;aspect-ratio:1.02}
+.f{position:absolute;border-radius:12px;overflow:hidden;background:#fff;box-shadow:0 40px 80px var(--sh),0 0 0 1px var(--ring)}
+.f .chrome{height:26px;background:#E9E7E2;display:flex;align-items:center;gap:6px;padding:0 10px}
+.f .chrome i{width:8px;height:8px;border-radius:50%;background:#c9c5bb}
+.f .chrome u{margin-left:10px;flex:1;max-width:60%;height:14px;border-radius:7px;background:#fff;font:500 9px/14px var(--body);color:#777;text-decoration:none;padding:0 8px;overflow:hidden;white-space:nowrap}
+.f img{width:100%}
+.f.a{left:0;top:24%;width:84%;animation:rise 1s .1s both cubic-bezier(.2,.7,.2,1)}
+.f.b{right:0;top:0;width:74%;animation:rise 1s .3s both cubic-bezier(.2,.7,.2,1)}
+.tag{position:absolute;z-index:2;background:var(--stage);color:var(--text);border:1px solid var(--line);border-radius:999px;font:600 12px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;padding:9px 14px}
+.tag.a{left:3%;top:24%;transform:translateY(-50%)}.tag.b{right:4%;top:0;transform:translateY(-50%)}
+@keyframes rise{from{transform:translateY(34px)}to{transform:none}}
+@media (max-width:980px){.hero .wrap{grid-template-columns:1fr}.stage-hero{max-width:640px}}
+
+/* templates */
+.tpl{padding-block:clamp(64px,9vw,130px);position:relative;border-top:1px solid var(--line)}
+.tpl.shop{background:radial-gradient(60% 50% at 85% 20%,var(--shop-glow),transparent 70%)}
+.tpl.stay{background:radial-gradient(60% 50% at 12% 25%,var(--stay-glow),transparent 70%)}
+.tpl .grid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.5fr);gap:clamp(32px,5vw,80px);align-items:start}
+.tpl.stay .grid{grid-template-columns:minmax(0,1.5fr) minmax(0,.8fr)}
+.tpl .copy{display:flex;flex-direction:column;gap:22px;position:sticky;top:96px}
+.tpl h2{font-size:clamp(2.4rem,5vw,4.2rem)}
+.tpl .pitch{color:var(--mute);font-size:1.08rem;max-width:42ch}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips span{border:1px solid var(--line);background:var(--panel);border-radius:999px;font:600 12px/1 var(--body);padding:8px 13px;color:var(--text);letter-spacing:.02em}
+.feat{list-style:none;margin:6px 0 0;padding:0;display:grid;gap:0}
+.feat li{display:grid;grid-template-columns:22px 1fr;gap:12px;padding:13px 0;border-top:1px solid var(--line);font-size:15px}
+.feat li::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--accent);margin-top:9px;justify-self:center}
+.feat b{display:block;font-weight:700}
+.feat span{color:var(--mute);font-size:14px}
+@media (max-width:980px){.tpl .grid,.tpl.stay .grid{grid-template-columns:1fr}.tpl .copy{position:static}.tpl.stay .demo{order:2}}
+
+.demo{position:relative;padding-bottom:72px}
+@media (min-width:981px){.demo .laptop{margin-right:clamp(70px,8vw,120px)}}
+.laptop{border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 50px 100px var(--sh),0 0 0 1px var(--ring)}
+.laptop .chrome{height:34px;background:#E9E7E2;display:flex;align-items:center;gap:7px;padding:0 14px}
+.laptop .chrome i{width:10px;height:10px;border-radius:50%;background:#c9c5bb}
+.laptop .chrome u{margin-left:14px;height:20px;line-height:20px;border-radius:10px;background:#fff;font:500 11px/20px var(--body);color:#6c6c6c;text-decoration:none;padding:0 14px;min-width:200px}
+.screen{height:clamp(380px,46vw,640px);overflow-y:auto;overflow-x:hidden;background:#fff;scrollbar-width:thin;scrollbar-color:#9a9a9a #eee}
+.screen img{width:100%;height:auto}
+.hint{display:flex;align-items:center;gap:8px;margin-top:14px;color:var(--mute);font-size:13px;letter-spacing:.02em}
+.hint::before{content:"↕";color:var(--accent);font-size:16px}
+.phone{position:absolute;right:-14px;bottom:0;width:clamp(150px,17vw,208px);border:7px solid #0a0c0f;border-radius:30px;background:#0a0c0f;box-shadow:0 30px 70px rgba(0,0,0,.6),0 0 0 1.5px #3b4452;z-index:3}
+.phone .screen{height:clamp(300px,34vw,420px);border-radius:22px;scrollbar-width:none}
+.phone .screen::-webkit-scrollbar{display:none}
+.phone::before{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:34%;height:9px;border-radius:6px;background:#0a0c0f;z-index:4}
+@media (max-width:980px){.demo{padding-bottom:0}.phone{position:relative;right:auto;margin:-48px auto 0;width:200px}}
+
+.sub2{margin-top:56px}
+.sub2 h3{font-size:clamp(1.6rem,3vw,2.3rem);margin-bottom:10px}
+.sub2 p{color:var(--mute);max-width:56ch;margin-bottom:24px}
+.acc{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.7fr);gap:28px;align-items:center}
+.acc .shot{border-radius:14px;overflow:hidden;box-shadow:0 30px 70px var(--sh),0 0 0 1px var(--ring);background:#fff}
+.acc .shot img{width:100%;transition:opacity .25s}
+.sw{display:grid;gap:10px}
+.sw button{display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:14px;padding:14px 16px;font:600 15px var(--body);cursor:pointer;text-align:left;min-height:56px}
+.sw button i{width:26px;height:26px;border-radius:50%;flex:none;box-shadow:0 0 0 2px var(--stage),0 0 0 3px var(--line2)}
+.sw button code{margin-left:auto;font:500 12px ui-monospace,SFMono-Regular,Menlo,monospace;color:var(--mute)}
+.sw button[aria-pressed="true"]{border-color:var(--accent);background:var(--panel2)}
+@media (max-width:760px){.acc{grid-template-columns:1fr}}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.pair figure{margin:0}
+.pair img{border-radius:12px;box-shadow:0 24px 60px var(--sh),0 0 0 1px var(--ring);width:100%}
+.pair figcaption{margin-top:12px;color:var(--mute);font-size:14px}
+@media (max-width:760px){.pair{grid-template-columns:1fr}}
+
+/* compare */
+.cmp{padding-block:clamp(64px,9vw,120px);border-top:1px solid var(--line)}
+.cmp h2{font-size:clamp(2.2rem,4.6vw,3.8rem);margin:16px 0 36px;max-width:16ch}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:18px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;min-width:640px;font-size:15px}
+th,td{text-align:left;padding:18px 22px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td,tr:last-child th{border-bottom:0}
+thead th{font:700 1.3rem/1.1 var(--display);background:var(--panel2)}
+tbody th{font:600 12px/1.4 var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--accent);width:20%}
+td{color:var(--text)}
+
+/* process */
+.proc{padding-block:clamp(64px,9vw,120px);border-top:1px solid var(--line)}
+.proc h2{font-size:clamp(2.2rem,4.6vw,3.8rem);margin:16px 0 40px;max-width:14ch}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;counter-reset:s}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:28px;display:flex;flex-direction:column;gap:12px}
+.step::before{counter-increment:s;content:counter(s);font:700 3.2rem/1 var(--display);color:var(--accent)}
+.step h3{font-size:1.5rem}
+.step p{color:var(--mute);font-size:15px}
+@media (max-width:820px){.steps{grid-template-columns:1fr}}
+
+.cta{padding-block:clamp(72px,10vw,140px);border-top:1px solid var(--line);text-align:left;position:relative;overflow:hidden}
+.cta::before{content:"";position:absolute;inset:auto -10% -60% auto;width:70%;aspect-ratio:1;background:radial-gradient(closest-side,var(--cta-glow),transparent);pointer-events:none}
+.cta .wrap{position:relative}
+.cta h2{font-size:clamp(3rem,8vw,7rem);max-width:12ch;margin-bottom:28px}
+.cta h2 em{font-style:normal;color:var(--accent)}
+.cta p{color:var(--mute);max-width:50ch;margin-bottom:32px}
+footer{border-top:1px solid var(--line);padding-block:28px;color:var(--mute);font-size:13px}
+footer .wrap{display:flex;gap:12px 32px;flex-wrap:wrap;justify-content:space-between}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="mark" href="/">toffler<span>.dev</span></a>
+    <nav aria-label="Sections"><a href="#shops">For shops</a><a href="#stays">For stays</a><a href="#compare">Compare</a><a href="#process">Process</a></nav>
+    <a class="btn" href="mailto:tofflerdev@proton.me?subject=Website%20template">Start a project</a>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="kicker">Website templates</span>
+      <h1>Small business. <em>Big first impression.</em></h1>
+      <p class="sub">Two ready-made websites, one for shops that sell online and one for stays that take bookings. Pick the one that fits, and we make it yours.</p>
+      <div class="acts"><a class="btn" href="#shops">See the templates</a><a class="btn ghost" href="mailto:tofflerdev@proton.me?subject=Website%20template">Talk to us</a></div>
+      <div class="proof">
+        <div><b>2</b>templates, each with live-scrolling demos</div>
+        <div><b>IT · EN</b>both built in</div>
+        <div><b>Phone first</b>checked at 390 px</div>
+      </div>
+    </div>
+    <div class="stage-hero">
+      <div class="f a"><div class="chrome"><i></i><i></i><i></i><u>petale.example</u></div><img src="img/shop-bordeaux.jpg" alt="Storefront template: pastel hero with product still life" fetchpriority="high"></div>
+      <div class="f b"><div class="chrome"><i></i><i></i><i></i><u>casaaurora.example</u></div><img src="img/stay-hero.jpg" alt="Stay template: full-bleed terrace hero with availability bar" fetchpriority="high"></div>
+      <span class="tag a">Shop</span><span class="tag b">Stay</span>
+    </div>
+  </div>
+</section>
+
+<section class="tpl shop" id="shops">
+  <div class="wrap grid">
+    <div class="copy">
+      <span class="kicker">For shops that sell online</span>
+      <h2>Pastel Commerce</h2>
+      <p class="pitch">A calm storefront for small shops. Clear prices, honest offers, and one amount that appears everywhere, from the product page to the payment.</p>
+      <div class="chips"><span>Beauty</span><span>Wellness</span><span>Small catalogues</span><span>Gift shops</span></div>
+      <ul class="feat">
+        <li><div><b>Offers that explain themselves</b><span>Offer badges, struck-through prices, a "you save" chip and a combo band.</span></div></li>
+        <li><div><b>One price, everywhere</b><span>The cart total is designed to match the amount sent to the payment provider.</span></div></li>
+        <li><div><b>Built for thumbs</b><span>Two-column cards at phone width, 44 px targets, no sideways scroll.</span></div></li>
+        <li><div><b>Readable by everyone</b><span>Text contrast meets WCAG AA, with visible focus and reduced-motion support.</span></div></li>
+        <li><div><b>Ready for a real back-end</b><span>Pairs with orders, payments and an admin panel. Tested on a live online shop.</span></div></li>
+      </ul>
+    </div>
+    <div>
+      <div class="demo">
+        <div class="laptop">
+          <div class="chrome"><i></i><i></i><i></i><u>petale.example</u></div>
+          <div class="screen" tabindex="0" role="region" aria-label="Scrollable preview of the Pastel Commerce storefront, desktop"><img src="img/shop-desktop.jpg" alt="Pastel Commerce storefront, full page on desktop" decoding="async"></div>
+        </div>
+        <div class="phone"><div class="screen" tabindex="0" role="region" aria-label="Scrollable preview of the storefront on a phone"><img src="img/shop-mobile.jpg" alt="Pastel Commerce storefront, full page on a phone" decoding="async"></div></div>
+      </div>
+      <p class="hint">Scroll inside the frames to read the full page</p>
+
+      <div class="sub2">
+        <h3>One token, three brands</h3>
+        <p>The accent is a single colour token. Change it and buttons, links, badges and the announcement bar follow.</p>
+        <div class="acc">
+          <div class="shot"><img id="accImg" src="img/shop-bordeaux.jpg" alt="Storefront in the selected accent colour"></div>
+          <div class="sw" role="group" aria-label="Accent colour presets">
+            <button type="button" data-k="bordeaux" aria-pressed="true"><i style="background:#8e2348"></i>Bordeaux<code>#8e2348</code></button>
+            <button type="button" data-k="lagoon" aria-pressed="false"><i style="background:#1f6b73"></i>Lagoon<code>#1f6b73</code></button>
+            <button type="button" data-k="iris" aria-pressed="false"><i style="background:#5b4bb7"></i>Iris<code>#5b4bb7</code></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="tpl stay" id="stays">
+  <div class="wrap grid">
+    <div>
+      <div class="demo">
+        <div class="laptop">
+          <div class="chrome"><i></i><i></i><i></i><u>casaaurora.example</u></div>
+          <div class="screen" tabindex="0" role="region" aria-label="Scrollable preview of the Stay template, desktop"><img src="img/stay-desktop.jpg" alt="Stay template, full page on desktop" decoding="async"></div>
+        </div>
+        <div class="phone"><div class="screen" tabindex="0" role="region" aria-label="Scrollable preview of the Stay template on a phone"><img src="img/stay-mobile.jpg" alt="Stay template, full page on a phone" decoding="async"></div></div>
+      </div>
+      <p class="hint">Scroll inside the frames to read the full page</p>
+
+      <div class="sub2">
+        <h3>Made to be photographed</h3>
+        <p>Big images carry the page. The gallery lets guests flip through rooms, and the offer band puts one clear package in front of them.</p>
+        <div class="pair">
+          <figure><img src="img/stay-rooms.jpg" alt="Room gallery with amenities list" loading="lazy"><figcaption>Room gallery with a short, honest amenities list</figcaption></figure>
+          <figure><img src="img/stay-offer.jpg" alt="Offer band with price and booking button" loading="lazy"><figcaption>Offer band with price, inclusions and a booking button</figcaption></figure>
+        </div>
+      </div>
+    </div>
+    <div class="copy">
+      <span class="kicker">For stays that take bookings</span>
+      <h2>Olympus Stay</h2>
+      <p class="pitch">A quiet, image-led website for a B&amp;B or guesthouse. Guests pick their dates and finish the reservation on Booking.com, so you keep one calendar and one set of rules.</p>
+      <div class="chips"><span>B&amp;B</span><span>Guesthouses</span><span>Small hotels</span><span>Holiday homes</span></div>
+      <ul class="feat">
+        <li><div><b>Availability bar in the hero</b><span>Dates and guests go straight to your Booking.com page.</span></div></li>
+        <li><div><b>Italian and English</b><span>A built-in language switch instead of machine translation.</span></div></li>
+        <li><div><b>Everything a guest asks</b><span>Rooms, amenities, breakfast, terrace, how to get there, in one scroll.</span></div></li>
+        <li><div><b>Nothing to patch</b><span>A static page with no plugins, so there is no CMS to keep updated.</span></div></li>
+        <li><div><b>Your photos, your voice</b><span>The layout is built around the client's own pictures and words.</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="cmp" id="compare">
+  <div class="wrap">
+    <span class="kicker">Side by side</span>
+    <h2>Which one is yours?</h2>
+    <div class="tbl">
+      <table>
+        <thead><tr><th></th><th>Pastel Commerce</th><th>Olympus Stay</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Best for</th><td>Shops with a small catalogue</td><td>B&amp;Bs, guesthouses and small hotels</td></tr>
+          <tr><th scope="row">What the visitor does</th><td>Browses, adds to cart, pays</td><td>Picks dates, books on Booking.com</td></tr>
+          <tr><th scope="row">Look</th><td>Soft pastel gradients, swappable accent</td><td>Stone white, oak and deep green, large photography</td></tr>
+          <tr><th scope="row">Languages</th><td>Italian and English</td><td>Italian and English</td></tr>
+          <tr><th scope="row">Back-end</th><td>Optional: orders, payments, admin</td><td>None needed: the booking engine is Booking.com</td></tr>
+          <tr><th scope="row">Delivered as</th><td>Static front end</td><td>One static page, no CMS</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="proc" id="process">
+  <div class="wrap">
+    <span class="kicker">How it works</span>
+    <h2>From template to your domain.</h2>
+    <div class="steps">
+      <div class="step"><h3>Choose</h3><p>Pick the template closest to your business. Tell us your name, your products or rooms, and your colours.</p></div>
+      <div class="step"><h3>Make it yours</h3><p>We replace the name, photos and words with yours, and you approve a private preview before anything goes live.</p></div>
+      <div class="step"><h3>Go live</h3><p>We publish it on your own domain and check it on a real phone.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <h2>Let's make <em>yours.</em></h2>
+    <p>Tell us what you sell or who you host. We will tell you which template fits and what it takes to launch it.</p>
+    <a class="btn" href="mailto:tofflerdev@proton.me?subject=Website%20template">Start a project</a>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap"><span>© 2026 toffler.dev · <a href="/privacy-en.html">Privacy</a></span><span>Demo brands Maison Petale and Casa Aurora are fictional. Names, prices, scores and images in the demos are placeholders.</span></div></footer>
+
+<script>
+(function(){
+  var imgs={bordeaux:"img/shop-bordeaux.jpg",lagoon:"img/shop-lagoon.jpg",iris:"img/shop-iris.jpg"};
+  var el=document.getElementById("accImg");
+  Object.keys(imgs).forEach(function(k){var i=new Image();i.src=imgs[k]});
+  var btns=Array.prototype.slice.call(document.querySelectorAll(".sw button"));
+  btns.forEach(function(b){b.addEventListener("click",function(){
+    el.style.opacity=0;
+    setTimeout(function(){el.src=imgs[b.dataset.k];el.style.opacity=1},180);
+    btns.forEach(function(x){x.setAttribute("aria-pressed",x===b?"true":"false")});
+  })});
+})();
+</script>
+
+</body>
+</html>
